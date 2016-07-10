@@ -23,6 +23,9 @@ var gameState = "inactive";
 var availableCommandsCount = 1;
 
 var clients = {};
+// key: {commands, timeoutId, playingIndex}
+var commands = {};
+
 spheroWS.spheroServer.events.on("addClient", (key, client) => {
   dashboard.addClient(key);
   clients[key] = client;
@@ -32,7 +35,15 @@ spheroWS.spheroServer.events.on("addClient", (key, client) => {
   client.sendCustomMessage("gameState", { gameState: gameState });
   client.sendCustomMessage("availableCommandsCount", { count: availableCommandsCount });
   client.on("arriveCustomMessage", (name, data, mesID) => {
-    console.log("arrived customMes : " + name);
+    if (name === "commands") {
+      if (typeof commands[key] !== "undefined" && typeof commands[key].timeoutId !== "undefined") {
+        clearTimeout(commands[key].timeoutId);
+      }
+      commands[key] = {
+        commands: data
+      };
+      commandLoop(key, 0);
+    }
   });
 });
 spheroWS.spheroServer.events.on("removeClient", key => {
@@ -81,4 +92,22 @@ dashboard.on("updateLink", (key, orbName) => {
     clients[key].setLinkedOrb(spheroWS.spheroServer.getOrb(orbName));
   }
 });
+
+function commandLoop(key, index) {
+  var currentCommandDetails = commands[key];
+  if (typeof currentCommandDetails === "undefined") {
+    throw new Error("実行しようとしたcommandsはundefinedでした。: " + key);
+  }
+  var currentCommand = currentCommandDetails.commands[index];
+  var orb = clients[key].linkedOrb;
+  if (!orb.hasCommand(currentCommand.commandName)) {
+    throw new Error("command " + currentCommand.commandName + " は存在しませんでした。");
+  }
+  console.log("orb." + currentCommand.commandName + "(" + currentCommand.args.join(", ") + ");");
+  if (!isTestMode) {
+    orb.command(currentCommand.commandName, currentCommand.args);
+  }
+  var nextIndex = index + 1 >= currentCommandDetails.commands.length ? 0 : index + 1;
+  currentCommandDetails.timeoutId = setTimeout(commandLoop, currentCommand.time * 1000, key, nextIndex);
+}
 
