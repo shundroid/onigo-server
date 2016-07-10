@@ -3,6 +3,7 @@ var argv = require("argv");
 var config = require("./config");
 var VirtualSphero = require("sphero-ws-virtual-plugin");
 var Dashboard = require("./dashboard");
+var CommandRunner = require("./commandRunner");
 
 var opts = [
   { name: "test", type: "boolean" }
@@ -28,59 +29,29 @@ var commands = {};
 
 spheroWS.spheroServer.events.on("addClient", (key, client) => {
   dashboard.addClient(key);
-  clients[key] = client;
+  clients[key] = {
+    client: client,
+    commandRunner: new CommandRunner(key)
+  };
   players[key] = {
     hp: 100
   };
+  clients[key].commandRunner.on("command", function(commandName, args) {
+    if (client.linkedOrb !== null) {
+      if (!client.linkedOrb.hasCommand(commandName)) {
+        throw new Error("command : " + commandName + " is not valid.");
+      }
+      client.linkedOrb.command(commandName, args);
+    }
+  });
   client.sendCustomMessage("gameState", { gameState: gameState });
   client.sendCustomMessage("availableCommandsCount", { count: availableCommandsCount });
   client.on("arriveCustomMessage", (name, data, mesID) => {
     if (name === "commands") {
       if (typeof data.type === "string" && data.type === "built-in") {
-        // built-in command arrived.
-        if (typeof commands[key] === "undefined") {
-          commands[key] = {};
-        }
-        switch (data.command) {
-          case "rotate":
-            if (typeof commands[key] !== "undefined" && typeof commands[key].timeoutId !== "undefined") {
-              clearTimeout(commands[key].timeoutId);
-            }
-            console.log("rotating..");
-            var rotateFunction = function() {
-              players[key].angle = (players[key].angle + 45) % 360;
-              if (!isTestMode) {
-                client.linkedOrb.instance.ping(function() {
-                  client.linkedOrb.command("roll", [0, players[key].angle]);
-                });
-              }
-              commands[key].timeoutId = setTimeout(rotateFunction, 500);
-            };
-            rotateFunction();
-            break;
-          case "stop":
-            console.log("stop!");
-            if (typeof commands[key] !== "undefined" && typeof commands[key].timeoutId !== "undefined") {
-              clearTimeout(commands[key].timeoutId);
-            }
-            client.linkedOrb.command("roll", [0, players[key].angle]);
-            break;
-          case "dash":
-            console.log("fufuf");
-            players[key].baseSpeed = 50;
-            setTimeout(function() {
-              players[key].baseSpeed = 0;
-            }, 1000);
-            break;
-        }
+        clients[key].commandRunner.setBuiltInCommands(data.command);
       } else {
-        if (typeof commands[key] !== "undefined" && typeof commands[key].timeoutId !== "undefined") {
-          clearTimeout(commands[key].timeoutId);
-        }
-        commands[key] = {
-          commands: data
-        };
-        commandLoop(key, 0);
+        clients[key].commandRunner.setCommands(data);
       }
     }
   });
@@ -115,20 +86,20 @@ spheroWS.spheroServer.events.on("removeOrb", name => {
 dashboard.on("gameState", state => {
   gameState = state;
   Object.keys(clients).forEach(key => {
-    clients[key].sendCustomMessage("gameState", { gameState: gameState });
+    clients[key].client.sendCustomMessage("gameState", { gameState: gameState });
   });
 });
 dashboard.on("availableCommandsCount", count => {
   availableCommandsCount = count;
   Object.keys(clients).forEach(key => {
-    clients[key].sendCustomMessage("availableCommandsCount", { count: availableCommandsCount });
+    clients[key].client.sendCustomMessage("availableCommandsCount", { count: availableCommandsCount });
   });
 });
 dashboard.on("updateLink", (key, orbName) => {
   if (orbName === null) {
-    clients[key].unlink();
+    clients[key].client.unlink();
   } else {
-    clients[key].setLinkedOrb(spheroWS.spheroServer.getOrb(orbName));
+    clients[key].client.setLinkedOrb(spheroWS.spheroServer.getOrb(orbName));
   }
 });
 
@@ -138,7 +109,7 @@ function commandLoop(key, index) {
     throw new Error("実行しようとしたcommandsはundefinedでした。: " + key);
   }
   var currentCommand = currentCommandDetails.commands[index];
-  var orb = clients[key].linkedOrb;
+  var orb = clients[key].client.linkedOrb;
   if (!orb.hasCommand(currentCommand.commandName)) {
     throw new Error("command " + currentCommand.commandName + " は存在しませんでした。");
   }
