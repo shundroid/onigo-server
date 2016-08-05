@@ -1,5 +1,17 @@
+import eventPublisher from "./publisher";
+
 export default class RankingMaker {
   constructor() {
+    this.ranking = null;
+    eventPublisher.on("updatedHp", () => {
+      this.make();
+    });
+    eventPublisher.on("updateLink", () => {
+      this.make();
+    });
+    eventPublisher.on("color", () => {
+      this.make();
+    });
   }
   make(controllers) {
     const controllerNames = Object.keys(controllers);
@@ -26,6 +38,7 @@ export default class RankingMaker {
     }).forEach(name => {
       onis[name] = controllers[name].getStates();
     });
-    return { ranking, onis };
+    this.ranking = { ranking, onis };
+    eventPublisher.emit("ranking", this.ranking);
   }
 }

@@ -1,7 +1,6 @@
 import express from "express";
 import io from "socket.io";
 import controllerModel from "./controllerModel";
-import RankingMaker from "./rankingMaker";
 import eventPublisher from "./publisher";
 
 let scoreboardInstance = null;
@@ -24,8 +23,6 @@ function Scoreboard(port) {
 
   this.currentRanking = null;
 
-  this.rankingMaker = new RankingMaker();
-
   this.sockets = [];
   this.io.on("connection", socket => {
     console.log("a scoreboard connected.");
@@ -35,22 +32,12 @@ function Scoreboard(port) {
     }
   });
 
-  eventPublisher.on("updatedHp", () => {
-    this.updateRanking();
-  });
-  eventPublisher.on("updateLink", () => {
-    this.updateRanking();
-  });
-  eventPublisher.on("color", () => {
-    this.updateRanking();
+  eventPublisher.on("ranking", ranking => {
+    this.currentRanking = ranking;
+    this.sockets.forEach(socket => {
+      socket.emit("data", this.currentRanking);
+    });
   });
 }
-
-Scoreboard.prototype.updateRanking = function() {
-  this.currentRanking = this.rankingMaker.make(controllerModel.controllers);
-  this.sockets.forEach(socket => {
-    socket.emit("data", this.currentRanking);
-  });
-};
 
 module.exports = Scoreboard;
