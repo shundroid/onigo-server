@@ -34,19 +34,17 @@ function SocketManager() {
   this.isLastSentBySocket = {};
   this.socket = io();
   this.socket.on("defaultData", (state, count, controllers, orbs, unnameds) => {
-    emit.call(this, "gameState", state);
-    emit.call(this, "availableCommandsCount", count);
     emit.call(this, "orbs", orbs);
     emit.call(this, "defaultControllers", controllers);
     emit.call(this, "defaultUnnameds", unnameds);
   });
   socketsUseEvents.forEach(eventName => {
     this.isLastSentBySocket[eventName] = false;
-    eventPublisher.on(eventName, function() {
-      if (this.isLastSentBySocket[eventName]) {
+    eventPublisher.on(eventName, function(...datas) {
+     if (this.isLastSentBySocket[eventName]) {
         this.isLastSentBySocket[eventName] = false;
       } else {
-        this.socket.emit.apply(this.socket, arguments);
+        this.socket.emit.apply(this.socket, [eventName].concat(datas));
       }
     }.bind(this));
     this.socket.on(eventName, function(...datas) {
@@ -62,7 +60,7 @@ function SocketManager() {
 // listenerの名前は、send<eventName（一文字目大文字）>とする。
 function emit(eventName, ...datas) {
   this.isLastSentBySocket[eventName] = true;
-  eventPublisher.emit.apply(eventPublisher, datas);
+  eventPublisher.emit.apply(eventPublisher, [eventName].concat(datas));
 }
 
 export default SocketManager;

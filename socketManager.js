@@ -25,7 +25,6 @@ export default class SocketManager {
           // io.sockets.emit でもやれそうだが、
           // BehaviorSubject で、現在の値をとれるようにするため、
           // socketごとにsubscribeしている。
-          console.log(this.lastSentSockets[subjectName]);
           if (this.lastSentSockets[subjectName] === socket.id) {
             this.lastSentSockets[subjectName] = null;
           } else {
