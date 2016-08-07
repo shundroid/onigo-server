@@ -10,11 +10,11 @@ import AddOrb from "./addOrb";
 import OrbManager from "./orbManager";
 import CheckBatteryButton from "./checkBatteryButton";
 import PingButton from "./pingButton";
-import UnnamedControllers from "./unnamedControllers";
 import Log from "./log";
 
 import ko from "knockout";
 import Controllers from "./controllers";
+import UnnamedClients from "./unnamedClients";
 
 document.addEventListener("DOMContentLoaded", () => {
   // new ControllerManager(document.getElementById("controllers"));
@@ -28,9 +28,9 @@ document.addEventListener("DOMContentLoaded", () => {
   new SocketManager();
   new CheckBatteryButton(document.getElementById("check-battery-button"));
   new PingButton(document.getElementById("ping-button"));
-  new UnnamedControllers(document.getElementById("unnamed-controllers"));
   new Log();
   const controllers = new Controllers();
-  ko.applyBindings(controllers);
+  const unnamedClients = new UnnamedClients();
+  ko.applyBindings({ controllers, unnamedClients });
 });
 
