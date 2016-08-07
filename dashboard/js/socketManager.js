@@ -26,7 +26,8 @@ const socketsUseEvents = [
   "hp",
   "log",
   "streamed",
-  "successReconnect"
+  "successReconnect",
+  "notifications"
 ];
 let instance = null;
 function SocketManager() {

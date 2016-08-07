@@ -6,8 +6,10 @@ import argv from "argv";
 
 import config from "./config";
 import SocketManager from "./socketManager";
-import ControllerModel from "./controllerModel";
-import SpheroServerObserver from "./spheroServerObserver";
+import ControllerManager from "./controllerManager";
+import OrbManager from "./orbManager";
+// import SpheroServerObserver from "./spheroServerObserver";
+import Connector from "./connector";
 
 const opts = [
   { name: "test", type: "boolean" }
@@ -21,5 +23,7 @@ const server = http.Server(app);
 server.listen(8082);
 
 new SocketManager(server);
-const controllerModel = new ControllerModel();
-new SpheroServerObserver(config.websocket, isTestMode, controllerModel);
+const spheroServer = spheroWebSocket(config.websocket, isTestMode).spheroServer;
+new ControllerManager(spheroServer);
+new OrbManager(spheroServer, isTestMode);
+// new SpheroServerObserver(config.websocket, isTestMode, controllerModel, connector);

@@ -7,7 +7,9 @@ const socketsUseSubjects = [
   "rankingState",
   "availableCommandsCount",
   "unnamedClients",
-  "controllers"
+  "controllers",
+  "orbs",
+  "notifications",
 ];
 
 export default class SocketManager {

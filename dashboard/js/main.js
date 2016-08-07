@@ -16,13 +16,14 @@ import ko from "knockout";
 import Controllers from "./controllers";
 import UnnamedClients from "./unnamedClients";
 import Colors from "./colors";
+import Orbs from "./orbs";
 
 document.addEventListener("DOMContentLoaded", () => {
   // new ControllerManager(document.getElementById("controllers"));
   new RankingState(document.getElementById("show-ranking-button"));
   new GameState(document.getElementById("game-state-button"));
-  new AddOrb();
-  new OrbManager(document.getElementById("orbs"));
+  // new AddOrb();
+  // new OrbManager(document.getElementById("orbs"));
   new AvailableCommandsCount(
       document.getElementById("available-commands"),
       document.getElementById("set-available-commands-button"));
@@ -31,10 +32,12 @@ document.addEventListener("DOMContentLoaded", () => {
   new PingButton(document.getElementById("ping-button"));
   new Log();
   const controllers = new Controllers();
+  const orbs = new Orbs();
   const unnamedClients = new UnnamedClients();
   const colors = new Colors();
   ko.applyBindings({
     controllersViewModel: controllers,
+    orbsViewModel: orbs,
     unnamedClientsViewModel: unnamedClients,
     colorsViewModel: colors
   });

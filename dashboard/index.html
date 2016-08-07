@@ -61,9 +61,11 @@
       </section>
       <section>
         <h2>Add Orb</h2>
-        Name: <input type="text" id="new-orb-name" /><br />
-        Port: <input type="text" id="new-orb-port" /><br />
-        <button id="add-orb">Add</button>
+        <form data-bind="submit: orbsViewModel.addOrb">
+          Name: <input type="text" data-bind="value: orbsViewModel.addOrbName" /><br />
+          Port: <input type="text" data-bind="value: orbsViewModel.addOrbPort" /><br />
+          <button type="submit">Add</button>
+        </form>
       </section>
       <section id="sec-orbs">
         <h2>
@@ -72,16 +74,30 @@
           <button id="ping-button">Ping</button>
         </h2>
         <table id="orbs">
-          <tr>
-            <th>Orb Name</th>
-            <th>Port</th>
-            <th>Battery State</th>
-            <th>Link Status</th>
-            <th>Ping Status</th>
-            <th>Last Streamed</th>
-            <th>Disconnect</th>
-            <th>Reconnect</th>
-          </tr>
+          <thead>
+            <tr>
+              <th>Orb Name</th>
+              <th>Port</th>
+              <th>Battery State</th>
+              <th>Link Status</th>
+              <th>Ping Status</th>
+              <th>Last Streamed</th>
+              <th>Disconnect</th>
+              <th>Reconnect</th>
+            </tr>
+          </thead>
+          <tbody data-bind="foreach: orbsViewModel.orbs">
+            <tr>
+              <td data-bind="text: name"></td>
+              <td data-bind="text: port"></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
         </table>
       </section>
     </div>

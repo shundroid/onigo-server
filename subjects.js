@@ -4,7 +4,7 @@ export default {
   gameState: new BehaviorObservable("inactive"),
   rankingState: new BehaviorObservable("hide"),
   availableCommandsCount: new BehaviorObservable(1),
-  orbs: new BehaviorObservable({}),
+  orbs: new BehaviorObservable([]),
   currentLog: new BehaviorObservable(""),
   controllers: new BehaviorObservable([]),
   unnamedClients: new BehaviorObservable([]),
