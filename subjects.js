@@ -1,13 +1,14 @@
-import { BehaviorSubject, Subject } from "rx";
+import { BehaviorObservable, Observable } from "./util/observable";
 
 export default {
-  gameState: new BehaviorSubject("inactive"),
-  rankingState: new BehaviorSubject("hide"),
-  availableCommandsCount: new BehaviorSubject(1),
-  orbs: new BehaviourSubject({}),
-  currentLog: new BehaviourSubject(""),
-  controllers: new BehaviourSubject({}),
-  unnamedClients: new BehaviourSubject([]),
+  gameState: new BehaviorObservable("inactive"),
+  rankingState: new BehaviorObservable("hide"),
+  availableCommandsCount: new BehaviorObservable(1),
+  orbs: new BehaviorObservable({}),
+  currentLog: new BehaviorObservable(""),
+  controllers: new BehaviorObservable([]),
+  unnamedClients: new BehaviorObservable([]),
   // ここにデータのない通知（ping、batteryなど）が流れてくる
-  notifications: new Subject()
+  notifications: new Observable(),
+  spheroServerEvents: new Observable()
 };

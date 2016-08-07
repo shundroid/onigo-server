@@ -30,7 +30,6 @@ import config from "./config";
 import VirtualSphero from "sphero-ws-virtual-plugin";
 import Dashboard from "./dashboard";
 import Scoreboard from "./scoreboard";
-import CommandRunner from "./commandRunner";
 import Controller from "./controller";
 import controllerModel from "./controllerModel";
 import RankingMaker from "./rankingMaker";

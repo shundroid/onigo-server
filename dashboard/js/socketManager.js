@@ -4,6 +4,8 @@ const socketsUseEvents = [
   "gameState",
   "rankingState",
   "availableCommandsCount",
+  "controllers",
+  "unnamedClients",
   "link",
   "addOrb",
   "disconnect",

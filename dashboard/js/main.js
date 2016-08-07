@@ -13,8 +13,11 @@ import PingButton from "./pingButton";
 import UnnamedControllers from "./unnamedControllers";
 import Log from "./log";
 
+import ko from "knockout";
+import Controllers from "./controllers";
+
 document.addEventListener("DOMContentLoaded", () => {
-  new ControllerManager(document.getElementById("controllers"));
+  // new ControllerManager(document.getElementById("controllers"));
   new RankingState(document.getElementById("show-ranking-button"));
   new GameState(document.getElementById("game-state-button"));
   new AddOrb();
@@ -27,5 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   new PingButton(document.getElementById("ping-button"));
   new UnnamedControllers(document.getElementById("unnamed-controllers"));
   new Log();
+  const controllers = new Controllers();
+  ko.applyBindings(controllers);
 });
 

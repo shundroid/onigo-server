@@ -1,6 +1,8 @@
 import Controller from "./controller";
 import CommandRunner from "./commandRunner";
 import { EventEmitter } from "events";
+import subjects from "./subjects";
+import objectValues from "./util/objectValues";
 
 class ControllerModel extends EventEmitter {
   constructor() {
@@ -12,36 +14,55 @@ class ControllerModel extends EventEmitter {
 
     // { key: Client, ... }
     this.unnamedClients = {};
+    subjects.unnamedClients.subscribe(clients => {
+      this.unnamedClients = {};
+      clients.forEach(client => {
+        this.unnamedClients[client.key] = client;
+      });
+    });
     // { name: Controller, ... }
     this.controllers = {};
+    subjects.controllers.subscribe(controllers => {
+      this.controllers = {};
+      controllers.forEach(controller => {
+        this.controllers[controller.client.key] = controller;
+      });
+    });
   }
   add(key, client) {
-    this.unnamedClients[key] = client;
-    this.emit("add", key, client);
+    const nextUnnamedClients = Object.assign({}, this.unnamedClients);
+    nextUnnamedClients[key] = client;
+    subjects.unnamedClients.publish(objectValues(nextUnnamedClients));
   }
   setName(key, name) {
     if (typeof this.unnamedClients[key] === "undefined") {
       throw new Error("setNameしようとしたところ、keyに対するclientが見つかりませんでした。 key: " + key);
     }
-    let isNewName = typeof this.controllers[name] === "undefined";
+    const nextControllers = Object.assign({}, this.controllers);
+    let isNewName = typeof nextControllers[name] === "undefined";
     if (isNewName) {
-      this.controllers[name] = new Controller(name, new CommandRunner(key));
-    } else if (this.controllers[name].client !== null) {
+      nextControllers[name] = new Controller(name, new CommandRunner());
+    } else if (nextControllers[name].client !== null) {
       throw new Error("setNameしようとしましたが、既にclientが存在します。 name: " + name);
     }
-    this.controllers[name].setClient(this.unnamedClients[key]);
-    delete this.unnamedClients[key];
+    nextControllers[name].setClient(this.unnamedClients[key]);
+    subjects.controllers.publish(objectValues(nextControllers));
+    this.removeFromUnnamedClients(key);
     this.emit("named", key, name, isNewName);
   }
   removeFromUnnamedClients(key) {
     if (this.hasInUnnamedClients(key)) {
-      delete this.unnamedClients[key];
+      const nextUnnamedClients = Object.assign({}, this.unnamedClients);
+      delete nextUnnamedClients[key];
+      subjects.unnamedClients.publish(objectValues(nextUnnamedClients));
       this.emit("removeUnnamed", key);
     }
   }
   removeClient(name) {
     if (this.has(name)) {
-      this.controllers[name].setClient(null);
+      const nextControllers = Object.assign({}, this.controllers);
+      nextControllers[name].setClient(null);
+      subjects.controllers.publish(objectValues(nextControllers));
       this.emit("remove", name);
     }
   }
@@ -77,4 +98,4 @@ class ControllerModel extends EventEmitter {
   }
 }
 
-export default new ControllerModel();
+export default ControllerModel;

@@ -63,6 +63,7 @@ export default class Controller extends EventEmitter {
   }
   getStates() {
     return {
+      name: this.name,
       hp: this.hp,
       isOni: this.isOni,
       link: this.linkedOrb !== null ? this.linkedOrb.name : null,

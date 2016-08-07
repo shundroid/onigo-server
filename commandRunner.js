@@ -1,10 +1,9 @@
 var EventEmitter = require("events").EventEmitter;
 var util = require("util");
 
-function CommandRunner(key) {
+function CommandRunner() {
   EventEmitter.call(this);
 
-  this.key = key;
   this.commands = [];
   this.baseSpeed = 0;
   this.angle = 0;
@@ -82,7 +81,7 @@ CommandRunner.prototype.clearCustomTimeoutIds = function() {
 
 CommandRunner.prototype.loopMethod = function(index) {
   if (this.commands.length === 0) {
-    throw new Error("実行しようとしたcommandsは空でした。: " + this.key);
+    throw new Error("実行しようとしたcommandsは空でした。");
   }
   this.clearCustomTimeoutIds();
   const currentCommand = this.commands[index];
