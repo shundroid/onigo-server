@@ -19,13 +19,13 @@
         Count: <input type="number" id="available-commands" min="1" max="6" value="1" />
         <button id="set-available-commands-button">Set</button>
       </section>
-      <section data-bind="with: unnamedClients">
+      <section>
         <h2>Unnamed Controllers</h2>
-        <ul id="unnamed-controllers" data-bind="foreach: unnamedClients">
+        <ul id="unnamed-controllers" data-bind="foreach: unnamedClientsViewModel.unnamedClients">
           <li data-bind="text: $data"></li>
         </ul>
       </section>
-      <section data-bind="with: controllers">
+      <section>
         <h2>Controllers</h2>
         <table id="controllers">
           <thead>
@@ -39,7 +39,7 @@
               <th>Color</th>
             </tr>
           </thead>
-          <tbody data-bind="foreach: controllers">
+          <tbody data-bind="foreach: controllersViewModel.controllers">
             <tr>
               <td data-bind="text: name"></td>
               <td data-bind="text: key"></td>
@@ -51,6 +51,9 @@
               <td data-bind="text: hp"></td>
               <td></td>
               <td>
+                <select data-bind="foreach: $parent.colorsViewModel.colors">
+                  <option data-bind="text: $data"></option>
+                </select>
               </td>
             </tr>
           </tbody>

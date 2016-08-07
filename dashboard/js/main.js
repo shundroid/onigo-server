@@ -15,6 +15,7 @@ import Log from "./log";
 import ko from "knockout";
 import Controllers from "./controllers";
 import UnnamedClients from "./unnamedClients";
+import Colors from "./colors";
 
 document.addEventListener("DOMContentLoaded", () => {
   // new ControllerManager(document.getElementById("controllers"));
@@ -31,6 +32,11 @@ document.addEventListener("DOMContentLoaded", () => {
   new Log();
   const controllers = new Controllers();
   const unnamedClients = new UnnamedClients();
-  ko.applyBindings({ controllers, unnamedClients });
+  const colors = new Colors();
+  ko.applyBindings({
+    controllersViewModel: controllers,
+    unnamedClientsViewModel: unnamedClients,
+    colorsViewModel: colors
+  });
 });
 
