@@ -13,6 +13,15 @@ export default class orbManager {
     subjects.notifications.subscribe(notification => {
       if (notification.type === "addOrb") {
         this.addOrb(notification.orbName, notification.orbPort);
+      } else if (notification.type === "checkBattery") {
+        for (let orb of this.orbs.values()) {
+          orb.checkBattery().then(() => {
+            // 内部で orb.battery が更新された
+            subjects.orbs.publish([...this.orbs.values()]);
+          }, error => {
+            throw new Error(error);
+          });
+        }
       }
     });
     subjects.orbs.subscribe(orbs => {

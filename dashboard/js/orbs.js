@@ -13,6 +13,11 @@ export default class Orbs {
         orbPort: this.addOrbPort()
       });
     };
+    this.checkBattery = () => {
+      eventPublisher.emit("notifications", {
+        type: "checkBattery"
+      });
+    };
     eventPublisher.on("orbs", orbs => {
       this.orbs.removeAll();
       this.orbs.push.apply(this.orbs, orbs);

@@ -70,7 +70,7 @@
       <section id="sec-orbs">
         <h2>
           Orbs
-          <button id="check-battery-button">Check Battery</button>
+          <button id="check-battery-button" data-bind="click: orbsViewModel.checkBattery">Check Battery</button>
           <button id="ping-button">Ping</button>
         </h2>
         <table id="orbs">
@@ -90,7 +90,7 @@
             <tr>
               <td data-bind="text: name"></td>
               <td data-bind="text: port"></td>
-              <td></td>
+              <td data-bind="text: battery === null ? 'unchecked' : battery"></td>
               <td></td>
               <td></td>
               <td></td>

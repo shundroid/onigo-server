@@ -11,4 +11,16 @@ export default class Orb {
       battery: this.battery
     };
   }
+  checkBattery() {
+    return new Promise((resolve, reject) => {
+      this.swOrb.instance.getPowerState((error, data) => {
+        if (error) {
+          reject(error);
+        } else {
+          this.battery = data.batteryState;
+          resolve();
+        }
+      });
+    });
+  }
 }
