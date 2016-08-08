@@ -3,10 +3,10 @@ import Connector from "./connector";
 import arrayDiff from "./util/arrayDiff";
 
 export default class orbManager {
-  constructor(spheroServer, isTestMode) {
+  constructor(spheroServer, isTestMode, connector) {
     this.spheroServer = spheroServer;
     this.isTestMode = isTestMode;
-    this.connector = new Connector();
+    this.connector = connector;
     this.orbs = new Map();
 
     subjects.notifications.subscribe(notification => {
@@ -41,7 +41,7 @@ export default class orbManager {
     if (!this.isTestMode) {
       if (!this.connector.isConnecting(port)) {
         this.connector.connect(port, newOrb.instance).then(() => {
-          subjects.log.publish({ text: "connected orb.", type: "success" });
+          subjects.currentLog.publish({ text: "connected orb.", type: "success" });
           newOrb.instance.configureCollisions({
             meth: 0x01,
             xt: 0x7A,
@@ -50,7 +50,7 @@ export default class orbManager {
             ys: 0xFF,
             dead: 100
           }, () => {
-            subjects.log.publish({ text: "configured orb.", type: "success" });
+            subjects.currentLog.publish({ text: "configured orb.", type: "success" });
             const nextOrbs = new Map(this.orbs);
             nextOrbs.set(name, newOrb);
             subjects.orbs.publish([...nextOrbs.values()]);
