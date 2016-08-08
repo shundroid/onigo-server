@@ -2,13 +2,15 @@ export default class Orb {
   constructor(orb) {
     this.swOrb = orb;
     this.battery = null;
+    this.isLinked = false;
   }
   getStates() {
     return {
       name: this.swOrb.name,
       linkedClients: this.swOrb.linkedClients,
       port: this.swOrb.port,
-      battery: this.battery
+      battery: this.battery,
+      isLinked: this.isLinked
     };
   }
   checkBattery() {
@@ -22,5 +24,8 @@ export default class Orb {
         }
       });
     });
+  }
+  setLink(isLinked) {
+    this.isLinked = isLinked;
   }
 }

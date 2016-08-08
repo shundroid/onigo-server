@@ -39,6 +39,14 @@ export default class orbManager {
           //   ("0" + time.getMinutes()).slice(-2) + ":" +
           //   ("0" + time.getSeconds()).slice(-2));
         });
+        orb.swOrb.on("link", () => {
+          orb.setLink(true);
+          subjects.orbs.publish([...this.orbs.values()]);
+        });
+        orb.swOrb.on("unlink", () => {
+          orb.setLink(false);
+          subjects.orbs.publish([...this.orbs.values()]);
+        });
       });
       diff.removed.forEach(orb => {
         this.orbs.delete(orb.swOrb.orbName);
