@@ -6,12 +6,6 @@ export default {
     return controllers.map(controller => controller.getStates());
   },
   orbs: function(orbs) {
-    return orbs.map(orb => {
-      return {
-        name: orb.name,
-        linkedClients: orb.linkedClients,
-        port: orb.port
-      };
-    });
+    return orbs.map(orb => orb.getStates());
   }
 }

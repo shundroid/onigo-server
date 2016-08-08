@@ -1,6 +1,7 @@
 import subjects from "./subjects";
 import Connector from "./connector";
 import arrayDiff from "./util/arrayDiff";
+import Orb from "./orb";
 
 export default class orbManager {
   constructor(spheroServer, isTestMode, connector) {
@@ -17,10 +18,10 @@ export default class orbManager {
     subjects.orbs.subscribe(orbs => {
       const diff = arrayDiff.getDiff([...this.orbs.values()], orbs);
       diff.added.forEach(orb => {
-        this.orbs.set(orb.orbName, orb);
-        this.spheroServer.addOrb(orb);
-        orb.instance.streamOdometer();
-        orb.instance.on("odometer", data => {
+        this.orbs.set(orb.swOrb.orbName, orb);
+        this.spheroServer.addOrb(orb.swOrb);
+        orb.swOrb.instance.streamOdometer();
+        orb.swOrb.instance.on("odometer", data => {
           // これらは更新されたときに orbModel を変えて、subject は orbs で dashboard に送りたい
           // const time = new Date();
           // dashboard.streamed(
@@ -31,7 +32,7 @@ export default class orbManager {
         });
       });
       diff.removed.forEach(orb => {
-        this.orbs.delete(orb.orbName);
+        this.orbs.delete(orb.swOrb.orbName);
         // Todo: this.spheroServer.removeOrbする
       });
     });
@@ -52,7 +53,7 @@ export default class orbManager {
           }, () => {
             subjects.currentLog.publish({ text: "configured orb.", type: "success" });
             const nextOrbs = new Map(this.orbs);
-            nextOrbs.set(name, newOrb);
+            nextOrbs.set(name, new Orb(newOrb));
             subjects.orbs.publish([...nextOrbs.values()]);
           });
         });
