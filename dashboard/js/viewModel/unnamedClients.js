@@ -1,10 +1,11 @@
 import ko from "knockout";
-import eventPublisher from "./publisher";
 
 export default class UnnamedClients {
-  constructor() {
+  constructor(appModel) {
+    this.appModel = appModel;
+
     this.unnamedClients = ko.observableArray([]);
-    eventPublisher.on("unnamedClients", unnamedClients => {
+    this.appModel.unnamedClients.subscribe(unnamedClients => {
       this.unnamedClients.removeAll();
       this.unnamedClients.push.apply(this.unnamedClients, unnamedClients);
     });

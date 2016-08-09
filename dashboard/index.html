@@ -44,15 +44,14 @@
               <td data-bind="text: name"></td>
               <td data-bind="text: key"></td>
               <td>
-                <select>
+                <select data-bind="options: orbs">
                 </select>
               </td>
               <td data-bind="text: isOni"></td>
               <td data-bind="text: hp"></td>
               <td></td>
               <td>
-                <select data-bind="foreach: $parent.colorsViewModel.colors">
-                  <option data-bind="text: $data"></option>
+                <select data-bind="options: colors">
                 </select>
               </td>
             </tr>
