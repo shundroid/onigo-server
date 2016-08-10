@@ -14,6 +14,7 @@ import "../css/style.css";
 import ko from "knockout";
 import AppModel from "./model/appModel";
 import OrbModel from "./model/orbModel";
+import ControllerModel from "./model/controllerModel";
 import ControllersViewModel from "./viewModel/controllers";
 import UnnamedClientsViewModel from "./viewModel/unnamedClients";
 import OrbsViewModel from "./viewModel/orbs";
@@ -28,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // new AvailableCommandsCount(
   //     document.getElementById("available-commands"),
   //     document.getElementById("set-available-commands-button"));
-  new SocketManager();
   // new CheckBatteryButton(document.getElementById("check-battery-button"));
   // new PingButton(document.getElementById("ping-button"));
   // new Log();
@@ -36,7 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
   new SocketManager();
   const appModel = new AppModel();
   const orbModel = new OrbModel();
-  const controllersViewModel = new ControllersViewModel(appModel, orbModel);
+  const controllerModel = new ControllerModel();
+  const controllersViewModel = new ControllersViewModel(appModel, orbModel, controllerModel);
   const orbsViewModel = new OrbsViewModel(orbModel);
   const unnamedClientsViewModel = new UnnamedClientsViewModel(appModel);
   ko.applyBindings({

@@ -26,6 +26,9 @@ export default class SocketManager {
         return socketsUseSubjects.indexOf(subjectName) !== -1;
       }).forEach(subjectName => {
         subjects[subjectName].subscribe(item => {
+          if (subjectName === "controllers") {
+            console.log(item);
+          }
           // io.sockets.emit でもやれそうだが、
           // BehaviorSubject で、現在の値をとれるようにするため、
           // socketごとにsubscribeしている。

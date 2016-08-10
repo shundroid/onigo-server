@@ -1,32 +1,43 @@
 import ko from "knockout";
 
+const unlinkedLabel = "- unlinked -";
+
 export default class Controller {
-  constructor(appModel, orbModel, controller) {
+  constructor(appModel, orbModel, controllerModel, controller) {
     this.appModel = appModel;
     this.orbModel = orbModel;
+    this.controllerModel = controllerModel;
 
     this.name = ko.observable(controller.name);
     this.key = ko.observable(controller.key);
     this.isOni = ko.observable(controller.isOni);
     this.hp = ko.observable(controller.hp);
+    this.link = ko.observable(controller.link === null ? unlinkedLabel : controller.link);
     this.orbs = ko.observableArray([]);
     this.colors = ko.observableArray([]);
 
     this.orbModel.orbs.subscribe(orbs => {
-      this.updateOrbs(orbs);
+      updateOrbs.call(this, orbs);
     });
-    this.updateOrbs(this.orbModel.orbs())
+    updateOrbs.call(this, this.orbModel.orbs())
     this.appModel.colors.subscribe(colors => {
-      this.updateColors(colors);
+      updateColors.call(this, colors);
     });
-    this.updateColors(this.appModel.colors());
+    updateColors.call(this, this.appModel.colors());
+
+    this.updateLink = () => {
+      this.controllerModel.updateLink(this.name(), this.link === unlinkedLabel ? null : this.link);
+    };
   }
-  updateOrbs(orbs) {
-    this.orbs.removeAll();
-    this.orbs.push.apply(this.orbs, ["- no client -"].concat(orbs.map(orb => orb.name)));
-  }
-  updateColors(colors) {
-    this.colors.removeAll();
-    this.colors.push.apply(this.colors, colors);
-  }
+}
+
+// private methods
+function updateOrbs(orbs) {
+  this.orbs.removeAll();
+  this.orbs.push.apply(this.orbs, [unlinkedLabel].concat(orbs.map(orb => orb.name)));
+}
+
+function updateColors(colors) {
+  this.colors.removeAll();
+  this.colors.push.apply(this.colors, colors);
 }

@@ -27,6 +27,9 @@ export default class ControllerManager {
         this.unnamedClients.delete(client.key);
       });
     });
+    subjects.controllers.subscribe(controllers => {
+      // Todo
+    });
   }
   addUnnamedClient(key, client) {
     const nextUnnamedClients = new Map(this.unnamedClients);

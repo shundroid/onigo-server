@@ -44,7 +44,7 @@
               <td data-bind="text: name"></td>
               <td data-bind="text: key"></td>
               <td>
-                <select data-bind="options: orbs">
+                <select data-bind="options: orbs, value: link, event: { change: updateLink }">
                 </select>
               </td>
               <td data-bind="text: isOni"></td>

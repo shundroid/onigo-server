@@ -9,18 +9,17 @@ export default class OrbModel {
       this.orbs.removeAll();
       this.orbs.push.apply(this.orbs, orbs);
     });
-
-    this.addOrb = (orbName, orbPort) => {
-      eventPublisher.emit("notifications", {
-        type: "addOrb",
-        orbName: orbName,
-        orbPort: orbPort
-      });
-    };
-    this.checkBattery = () => {
-      eventPublisher.emit("notifications", {
-        type: "checkBattery"
-      });
-    };
+  }
+  addOrb(orbName, orbPort) {
+    eventPublisher.emit("notifications", {
+      type: "addOrb",
+      orbName: orbName,
+      orbPort: orbPort
+    });
+  }
+  checkBattery() {
+    eventPublisher.emit("notifications", {
+      type: "checkBattery"
+    });
   }
 }
