@@ -5,16 +5,16 @@ import spheroWebSocket from "sphero-websocket";
 import argv from "argv";
 
 import config from "./config";
-import SocketManager from "./socketManager";
-import ControllerManager from "./controllerManager";
-import OrbManager from "./orbManager";
-import SpheroErrorTracker from "./spheroErrorTracker";
-import Connector from "./connector";
+import SocketManager from "./components/socketManager";
+// import ControllerManager from "./controllerManager";
+// import OrbManager from "./orbManager";
+// import SpheroErrorTracker from "./spheroErrorTracker";
+import Connector from "./components/connector";
 
 // spheroErrorTracker は、console.error をラップするので、
 // 先にやる。
-const connector = new Connector();
-new SpheroErrorTracker(connector);
+// const connector = new Connector();
+// new SpheroErrorTracker(connector);
 
 const opts = [
   { name: "test", type: "boolean" }
@@ -27,7 +27,8 @@ app.use(express.static("dashboard/"));
 const server = http.Server(app);
 server.listen(8082);
 
-new SocketManager(server);
 const spheroServer = spheroWebSocket(config.websocket, isTestMode).spheroServer;
-new ControllerManager(spheroServer);
-new OrbManager(spheroServer, isTestMode, connector);
+new Connector(spheroServer);
+new SocketManager(server);
+// new ControllerManager(spheroServer);
+// new OrbManager(spheroServer, isTestMode, connector);
