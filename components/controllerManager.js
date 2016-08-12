@@ -11,7 +11,10 @@ export default class ControllerManager {
     this.spheroServer = spheroServer;
 
     this.spheroServer.events.on("addClient", (key, client) => {
-      this.addUnnamedClient(key, client);
+      this.addUnnamedClient(client);
+    });
+    this.spheroServer.events.on("removeClient", key => {
+      this.removeUnnamedClient(key);
     });
 
     controllerStore.on("unnamedClients", (prevUnnamedClients, nextUnnamedClients) => {
@@ -28,10 +31,15 @@ export default class ControllerManager {
       // Todo
     });
   }
-  addUnnamedClient(key, client) {
-    const nextUnnamedClients = new Map(this.unnamedClients);
-    nextUnnamedClients.set(key, client);
-    subjects.unnamedClients.publish([...nextUnnamedClients.values()]);
+  addUnnamedClient(client) {
+    const nextUnnamedClients = controllerStore.unnamedClients.slice(0);
+    nextUnnamedClients.push(client);
+    subjects.unnamedClients.publish(nextUnnamedClients);
+  }
+  removeUnnamedClient(key) {
+    const nextUnnamedClients = controllerStore.unnamedClients.slice(0);
+    nextUnnamedClients.splice(controllerStore.getIndexOfClientByKey(key), 1);
+    subjects.unnamedClients.publish(nextUnnamedClients);
   }
   // controllers に add して、unnamedClients から remove する
   setName(key, name) {

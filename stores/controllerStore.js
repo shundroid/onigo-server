@@ -15,8 +15,11 @@ class ControllerStore extends EventEmitter {
   getIndexOfControllerName(controllerName) {
     return this.controllers.map(controller => controller.name).indexOf(controllerName);
   }
+  getIndexOfClientByKey(key) {
+    return this.unnamedClients.map(client => client.key).indexOf(key);
+  }
   getUnnamedClientByKey(key) {
-    const index = this.unnamedClients.map(client => client.key).indexOf(key);
+    const index = this.getIndexOfClientByKey(key);
     if (index < 0) {
       throw new Error("keyに対するunnamedClientは存在しません。 key: " + key);
     }
