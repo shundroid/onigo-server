@@ -7,11 +7,11 @@ class OrbStore extends EventEmitter {
     this.unconnectedOrbs = [];
     this.orbs = [];
   }
-  change(changeStoreItem, nextValue) {
-    const prevValue = this[changeStoreItem];
-    this[changeStoreItem] = nextValue;
-    this.emit(changeStoreItem, prevValue, nextValue);
-  }
+}
+function change(changeStoreItem, nextValue) {
+  const prevValue = this[changeStoreItem];
+  this[changeStoreItem] = nextValue;
+  this.emit(changeStoreItem, prevValue, nextValue);
 }
 const orbStore = new OrbStore();
 
@@ -22,11 +22,11 @@ subjects.notifications.subscribe(notification => {
       name: notification.orbName,
       port: notification.orbPort
     });
-    orbStore.change("unconnectedOrbs", nextUnconnectedOrbs);
+    change.call(orbStore, "unconnectedOrbs", nextUnconnectedOrbs);
   }
 });
 subjects.orbs.subscribe(orbs => {
-  orbStore.change("orbs", orbs);
+  change.call(orbStore, "orbs", orbs);
 });
 
 export default orbStore;

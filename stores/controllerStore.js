@@ -7,11 +7,6 @@ class ControllerStore extends EventEmitter {
     this.unnamedClients = [];
     this.controllers = [];
   }
-  change(changeStoreItem, nextValue) {
-    const prevValue = this[changeStoreItem];
-    this[changeStoreItem] = nextValue;
-    this.emit(changeStoreItem, prevValue, nextValue);
-  }
   getIndexOfControllerName(controllerName) {
     return this.controllers.map(controller => controller.name).indexOf(controllerName);
   }
@@ -26,13 +21,19 @@ class ControllerStore extends EventEmitter {
     return this.unnamedClients[index];
   }
 }
+
+function change(changeStoreItem, nextValue) {
+  const prevValue = this[changeStoreItem];
+  this[changeStoreItem] = nextValue;
+  this.emit(changeStoreItem, prevValue, nextValue);
+}
 const controllerStore = new ControllerStore();
 
 subjects.unnamedClients.subscribe(unnamedClients => {
-  controllerStore.change("unnamedClients", unnamedClients);
+  change.call(controllerStore, "unnamedClients", unnamedClients);
 });
 subjects.controllers.subscribe(controllers => {
-  controllerStore.change("controllers", controllers);
+  change.call(controllerStore, "controllers", controllers);
 });
 
 export default controllerStore;

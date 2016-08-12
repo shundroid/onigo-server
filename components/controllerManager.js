@@ -3,11 +3,10 @@ import Controller from "../controller";
 import CommandRunner from "../commandRunner";
 import arrayDiff from "../util/arrayDiff";
 import controllerStore from "../stores/controllerStore";
+import appStore from "../stores/appStore";
 
 export default class ControllerManager {
   constructor(spheroServer) {
-    // this.unnamedClients = new Map();
-    // this.controllers = new Map();
     this.spheroServer = spheroServer;
 
     this.spheroServer.events.on("addClient", (key, client) => {
@@ -27,8 +26,36 @@ export default class ControllerManager {
         });
       });
     });
-    controllerStore.on("controllers", controllers => {
-      // Todo
+    controllerStore.on("controllers", (prevControllers, nextControllers) => {
+      const diff = arrayDiff.getDiff(prevControllers, nextControllers);
+      diff.added.concat(diff.noChanged).forEach(controller => {
+        const client = controller.client;
+        if (client !== null) {
+          client.sendCustomMessage("gameState", appStore.gameState);
+          client.sendCustomMessage("rankingState", appStore.rankingState);
+          client.sendCustomMessage("availableCommandsCount", appStore.availableCommandsCount);
+          client.sendCustomMessage("clientKey", client.key);
+          client.on("arriveCustomMessage", (messageName, data) => {
+            if (messageName === "commands") {
+              controller.commandRunner.setCommands(data);
+            }
+          });
+        }
+      });
+      diff.added.forEach(controller => {
+        controller.commandRunner.on("command", (commandName, args) => {
+          if (controller.linkedOrb !== null) {
+            if (!controller.linkedOrb.hasCommand(commandName)) {
+              throw new Error(`command : ${commandName} is not valid.`);
+            }
+            controller.linkedOrb.command(commandName, args);
+          }
+          virtualSphero.command(name, commandName, args);
+        });
+        controller.on("hp", hp => {
+          // dashboard.updateHp(name, hp);
+        });
+      });
     });
   }
   addUnnamedClient(client) {
