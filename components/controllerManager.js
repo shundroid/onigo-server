@@ -6,26 +6,22 @@ import controllerStore from "../stores/controllerStore";
 
 export default class ControllerManager {
   constructor(spheroServer) {
-    this.unnamedClients = new Map();
-    this.controllers = new Map();
+    // this.unnamedClients = new Map();
+    // this.controllers = new Map();
     this.spheroServer = spheroServer;
 
     this.spheroServer.events.on("addClient", (key, client) => {
       this.addUnnamedClient(key, client);
     });
 
-    controllerStore.on("unnamedClients", unnamedClients => {
-      const diff = arrayDiff.getDiff([...this.unnamedClients.values()], unnamedClients);
+    controllerStore.on("unnamedClients", (prevUnnamedClients, nextUnnamedClients) => {
+      const diff = arrayDiff.getDiff(prevUnnamedClients, nextUnnamedClients);
       diff.added.forEach(client => {
-        this.unnamedClients.set(client.key, client);
         client.on("arriveCustomMessage", (name, data) => {
           if (/^(requestName|useDefinedName)$/.test(name)) {
             this.processRequestName(name, client, data);
           }
         });
-      });
-      diff.removed.forEach(client => {
-        this.unnamedClients.delete(client.key);
       });
     });
     controllerStore.on("controllers", controllers => {
@@ -40,32 +36,35 @@ export default class ControllerManager {
   // controllers に add して、unnamedClients から remove する
   setName(key, name) {
     const nextControllers = controllerStore.controllers.slice(0);
-    const controllerNames = nextControllers.map(controller => controller.name);
-    if (nextControllers.indexOf(name) < 0) {
-      nextControllers.set(name, new Controller(name, new CommandRunner()));
-    } else if (nextControllers.get(name).client !== null) {
+    let controllerIndex = controllerStore.getIndexOfControllerName(name);
+    if (controllerIndex < 0) {
+      controllerIndex = nextControllers.length;
+      nextControllers.push(new Controller(name, new CommandRunner()));
+    } else if (nextControllers[controllerIndex].client !== null) {
       throw new Error("setNameしようとしましたが、既にclientが存在します。 name: " + name);
     }
-    nextControllers.get(name).setClient(this.unnamedClients.get(key));
-    subjects.controllers.publish([...nextControllers.values()]);
-    const nextUnnamedClients = new Map(this.unnamedClients);
-    nextUnnamedClients.delete(key);
-    subjects.unnamedClients.publish([...nextUnnamedClients.values()]);
+    nextControllers[controllerIndex].setClient(controllerStore.getUnnamedClientByKey(key));
+    subjects.controllers.publish(nextControllers);
+    const nextUnnamedClients = controllerStore.unnamedClients.slice(0);
+    const unnamedClientKeys = nextUnnamedClients.map(client => client.key);
+    nextUnnamedClients.splice(unnamedClientKeys.indexOf(key), 1);
+    subjects.unnamedClients.publish(nextUnnamedClients);
   }
   processRequestName(messageType, client, name) {
     // Nameが同じなら、clientKeyが別でもHPなどが引き継がれる、と実装するため、
     // requestNameとuseDefinedNameを分けている。
     // requestName ・・ 新しい名前を使う。もしその名前が既に使われていたらrejectする。
     // useDefinedName ・・既存の名前を使う。もしその名前がなければrejectする。
+    const controllerNameIndex = controllerStore.getIndexOfControllerName(name);
     if (messageType === "requestName") {
-      if (controllerStore.controllers.has(name)) {
+      if (controllerNameIndex >= 0) {
         client.sendCustomMessage("rejectName", null);
       } else {
         this.setName(client.key, name);
         client.sendCustomMessage("acceptName", name);
       }
     } else if (messageType === "useDefinedName") {
-      if (!controllerStore.controllers.has(name)) {
+      if (controllerNameIndex < 0) {
         client.sendCustomMessage("rejectName", null);
       } else {
         this.setName(client.key, name);
