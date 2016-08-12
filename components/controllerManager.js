@@ -1,7 +1,8 @@
-import subjects from "./subjects";
-import Controller from "./controller";
-import CommandRunner from "./commandRunner";
-import arrayDiff from "./util/arrayDiff";
+import subjects from "../subjects";
+import Controller from "../controller";
+import CommandRunner from "../commandRunner";
+import arrayDiff from "../util/arrayDiff";
+import controllerStore from "../stores/controllerStore";
 
 export default class ControllerManager {
   constructor(spheroServer) {
@@ -13,7 +14,7 @@ export default class ControllerManager {
       this.addUnnamedClient(key, client);
     });
 
-    subjects.unnamedClients.subscribe(unnamedClients => {
+    controllerStore.on("unnamedClients", unnamedClients => {
       const diff = arrayDiff.getDiff([...this.unnamedClients.values()], unnamedClients);
       diff.added.forEach(client => {
         this.unnamedClients.set(client.key, client);
@@ -27,7 +28,7 @@ export default class ControllerManager {
         this.unnamedClients.delete(client.key);
       });
     });
-    subjects.controllers.subscribe(controllers => {
+    controllerStore.on("controllers", controllers => {
       // Todo
     });
   }
@@ -38,8 +39,9 @@ export default class ControllerManager {
   }
   // controllers に add して、unnamedClients から remove する
   setName(key, name) {
-    const nextControllers = new Map(this.controllers);
-    if (!nextControllers.has(name)) {
+    const nextControllers = controllerStore.controllers.slice(0);
+    const controllerNames = nextControllers.map(controller => controller.name);
+    if (nextControllers.indexOf(name) < 0) {
       nextControllers.set(name, new Controller(name, new CommandRunner()));
     } else if (nextControllers.get(name).client !== null) {
       throw new Error("setNameしようとしましたが、既にclientが存在します。 name: " + name);
@@ -56,14 +58,14 @@ export default class ControllerManager {
     // requestName ・・ 新しい名前を使う。もしその名前が既に使われていたらrejectする。
     // useDefinedName ・・既存の名前を使う。もしその名前がなければrejectする。
     if (messageType === "requestName") {
-      if (this.controllers.has(name)) {
+      if (controllerStore.controllers.has(name)) {
         client.sendCustomMessage("rejectName", null);
       } else {
         this.setName(client.key, name);
         client.sendCustomMessage("acceptName", name);
       }
     } else if (messageType === "useDefinedName") {
-      if (!this.controllers.has(name)) {
+      if (!controllerStore.controllers.has(name)) {
         client.sendCustomMessage("rejectName", null);
       } else {
         this.setName(client.key, name);

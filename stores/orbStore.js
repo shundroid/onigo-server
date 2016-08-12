@@ -25,5 +25,8 @@ subjects.notifications.subscribe(notification => {
     orbStore.change("unconnectedOrbs", nextUnconnectedOrbs);
   }
 });
+subjects.orbs.subscribe(orbs => {
+  orbStore.change("orbs", orbs);
+});
 
 export default orbStore;
