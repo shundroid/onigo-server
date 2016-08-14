@@ -13,10 +13,25 @@ export default class AppModel {
       "purple",
       "skyblue"
     ]);
+    this.gameState = ko.observable("inactive");
+    this.rankingState = ko.observable("hide");
+    this.availableCommandsCount = ko.observable(0);
 
     eventPublisher.on("unnamedClients", unnamedClients => {
       this.unnamedClients.removeAll();
       this.unnamedClients.push.apply(this.unnamedClients, unnamedClients);
     });
+    eventPublisher.on("gameState", gameState => {
+      this.gameState(gameState);
+    });
+    eventPublisher.on("rankingState", rankingState => {
+      this.rankingState(rankingState);
+    });
+    eventPublisher.on("availableCommandsCount", availableCommandsCount => {
+      this.availableCommandsCount(availableCommandsCount);
+    });
+  }
+  toggleGameState() {
+    eventPublisher.emit("gameState", this.gameState() === "inactive" ? "active" : "inactive");
   }
 }

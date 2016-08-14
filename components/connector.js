@@ -7,8 +7,8 @@ import SpheroErrorTracker from "../spheroErrorTracker";
 class Connector {
   constructor(spheroServer) {
     this.spheroErrorTracker = new SpheroErrorTracker(5);
-    orbStore.on("unconnectedOrbs", (prevOrbs, nextOrbs) => {
-      const added = arrayDiff.getDiff(prevOrbs, nextOrbs).added;
+    orbStore.unconnectedOrbs.subscribe(nextOrbs => {
+      const added = arrayDiff.getDiff(orbStore.unconnectedOrbs.get(), nextOrbs).added;
       added.forEach(orb => {
         const newOrb = spheroServer.makeRawOrb(orb.name, orb.port);
         this.connect(orb.port, newOrb.instance).then(() => {
@@ -21,10 +21,10 @@ class Connector {
             dead: 100
           }, () => {
             subjects.currentLog.publish({ text: "configured orb.", type: "success" });
-            const nextOrbs = orbStore.orbs.slice(0);
+            const nextOrbs = orbStore.orbs.get().slice(0);
             nextOrbs.push(new Orb(newOrb));
             subjects.orbs.publish(nextOrbs);
-            const nextUnconnectedOrbs = orbStore.unconnectedOrbs.slice(0);
+            const nextUnconnectedOrbs = orbStore.unconnectedOrbs.get().slice(0);
             nextUnconnectedOrbs.splice(nextUnconnectedOrbs.indexOf(orb), 1);
             subjects.unnamedClients.publish(nextUnconnectedOrbs);
           });

@@ -3,10 +3,12 @@ import subjects from "../subjects";
 import socketTransformers from "../socketTransformers";
 import controllerStore from "../stores/controllerStore";
 import orbStore from "../stores/orbStore";
+import appStore from "../stores/appStore";
 
 const stores = {
   controller: controllerStore,
-  orb: orbStore
+  orb: orbStore,
+  app: appStore
 };
 
 const socketsUseSubjects = {
@@ -16,6 +18,9 @@ const socketsUseSubjects = {
   controller: [
     "unnamedClients",
     "controllers"
+  ],
+  app: [
+    "gameState"
   ]
 };
 
@@ -34,7 +39,7 @@ export default class SocketManager {
     this.io.on("connection", socket => {
       Object.keys(socketsUseSubjects).forEach(storeName => {
         socketsUseSubjects[storeName].forEach(subjectName => {
-          stores[storeName].on(subjectName, (prevItem, item) => {
+          stores[storeName][subjectName].subscribe(item => {
             // io.sockets.emit でもやれそうだが、
             // BehaviorSubject で、現在の値をとれるようにするため、
             // socketごとにsubscribeしている。

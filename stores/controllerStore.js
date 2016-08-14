@@ -1,39 +1,35 @@
 import { EventEmitter } from "events";
 import subjects from "../subjects";
+import StoreItem from "../util/storeItem";
 
 class ControllerStore extends EventEmitter {
   constructor() {
     super();
-    this.unnamedClients = [];
-    this.controllers = [];
+    this.unnamedClients = new StoreItem([]);
+    this.controllers = new StoreItem([]);
   }
   getIndexOfControllerName(controllerName) {
-    return this.controllers.map(controller => controller.name).indexOf(controllerName);
+    return this.controllers.get().map(controller => controller.name).indexOf(controllerName);
   }
   getIndexOfClientByKey(key) {
-    return this.unnamedClients.map(client => client.key).indexOf(key);
+    return this.unnamedClients.get().map(client => client.key).indexOf(key);
   }
   getUnnamedClientByKey(key) {
     const index = this.getIndexOfClientByKey(key);
     if (index < 0) {
       throw new Error("keyに対するunnamedClientは存在しません。 key: " + key);
     }
-    return this.unnamedClients[index];
+    return this.unnamedClients.get()[index];
   }
 }
 
-function change(changeStoreItem, nextValue) {
-  const prevValue = this[changeStoreItem];
-  this[changeStoreItem] = nextValue;
-  this.emit(changeStoreItem, prevValue, nextValue);
-}
 const controllerStore = new ControllerStore();
 
 subjects.unnamedClients.subscribe(unnamedClients => {
-  change.call(controllerStore, "unnamedClients", unnamedClients);
+  controllerStore.unnamedClients.publish(unnamedClients);
 });
 subjects.controllers.subscribe(controllers => {
-  change.call(controllerStore, "controllers", controllers);
+  controllerStore.controllers.publish(controllers);
 });
 
 export default controllerStore;

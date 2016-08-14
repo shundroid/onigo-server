@@ -1,32 +1,29 @@
 import { EventEmitter } from "events";
 import subjects from "../subjects";
+import StoreItem from "../util/storeItem";
 
 class OrbStore extends EventEmitter {
   constructor() {
     super();
-    this.unconnectedOrbs = [];
-    this.orbs = [];
+    this.unconnectedOrbs = new StoreItem([]);
+    this.orbs = new StoreItem([]);
   }
 }
-function change(changeStoreItem, nextValue) {
-  const prevValue = this[changeStoreItem];
-  this[changeStoreItem] = nextValue;
-  this.emit(changeStoreItem, prevValue, nextValue);
-}
+
 const orbStore = new OrbStore();
 
 subjects.notifications.subscribe(notification => {
   if (notification.type === "addOrb") {
-    const nextUnconnectedOrbs = orbStore.unconnectedOrbs.slice(0);
+    const nextUnconnectedOrbs = orbStore.unconnectedOrbs.get().slice(0);
     nextUnconnectedOrbs.push({
       name: notification.orbName,
       port: notification.orbPort
     });
-    change.call(orbStore, "unconnectedOrbs", nextUnconnectedOrbs);
+    orbStore.unconnectedOrbs.publish(nextUnconnectedOrbs);
   }
 });
 subjects.orbs.subscribe(orbs => {
-  change.call(orbStore, "orbs", orbs);
+  orbStore.orbs.publish(orbs);
 });
 
 export default orbStore;
