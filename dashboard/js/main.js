@@ -18,6 +18,7 @@ import ControllerModel from "./model/controllerModel";
 import ControllersViewModel from "./viewModel/controllers";
 import UnnamedClientsViewModel from "./viewModel/unnamedClients";
 import OrbsViewModel from "./viewModel/orbs";
+import AppViewModel from "./viewModel/AppViewModel";
 import SocketManager from "./socketManager";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -40,10 +41,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const controllersViewModel = new ControllersViewModel(appModel, orbModel, controllerModel);
   const orbsViewModel = new OrbsViewModel(orbModel);
   const unnamedClientsViewModel = new UnnamedClientsViewModel(appModel);
+  const appViewModel = new AppViewModel(appModel);
   ko.applyBindings({
     controllersViewModel,
     orbsViewModel,
-    unnamedClientsViewModel
+    unnamedClientsViewModel,
+    appViewModel
   });
 });
 

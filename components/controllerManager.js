@@ -16,8 +16,8 @@ export default class ControllerManager {
       this.removeUnnamedClient(key);
     });
 
-    controllerStore.on("unnamedClients", (prevUnnamedClients, nextUnnamedClients) => {
-      const diff = arrayDiff.getDiff(prevUnnamedClients, nextUnnamedClients);
+    controllerStore.unnamedClients.subscribe(nextUnnamedClients => {
+      const diff = arrayDiff.getDiff(controllerStore.unnamedClients.get(), nextUnnamedClients);
       diff.added.forEach(client => {
         client.on("arriveCustomMessage", (name, data) => {
           if (/^(requestName|useDefinedName)$/.test(name)) {
@@ -26,14 +26,14 @@ export default class ControllerManager {
         });
       });
     });
-    controllerStore.on("controllers", (prevControllers, nextControllers) => {
-      const diff = arrayDiff.getDiff(prevControllers, nextControllers);
+    controllerStore.controllers.subscribe(nextControllers => {
+      const diff = arrayDiff.getDiff(controllerStore.controllers.get(), nextControllers);
       diff.added.concat(diff.noChanged).forEach(controller => {
         const client = controller.client;
         if (client !== null) {
-          client.sendCustomMessage("gameState", appStore.gameState);
-          client.sendCustomMessage("rankingState", appStore.rankingState);
-          client.sendCustomMessage("availableCommandsCount", appStore.availableCommandsCount);
+          client.sendCustomMessage("gameState", appStore.gameState.get());
+          client.sendCustomMessage("rankingState", appStore.rankingState.get());
+          client.sendCustomMessage("availableCommandsCount", appStore.availableCommandsCount.get());
           client.sendCustomMessage("clientKey", client.key);
           client.on("arriveCustomMessage", (messageName, data) => {
             if (messageName === "commands") {
@@ -59,18 +59,18 @@ export default class ControllerManager {
     });
   }
   addUnnamedClient(client) {
-    const nextUnnamedClients = controllerStore.unnamedClients.slice(0);
+    const nextUnnamedClients = controllerStore.unnamedClients.get().slice(0);
     nextUnnamedClients.push(client);
     subjects.unnamedClients.publish(nextUnnamedClients);
   }
   removeUnnamedClient(key) {
-    const nextUnnamedClients = controllerStore.unnamedClients.slice(0);
+    const nextUnnamedClients = controllerStore.unnamedClients.get().slice(0);
     nextUnnamedClients.splice(controllerStore.getIndexOfClientByKey(key), 1);
     subjects.unnamedClients.publish(nextUnnamedClients);
   }
   // controllers に add して、unnamedClients から remove する
   setName(key, name) {
-    const nextControllers = controllerStore.controllers.slice(0);
+    const nextControllers = controllerStore.controllers.get().slice(0);
     let controllerIndex = controllerStore.getIndexOfControllerName(name);
     if (controllerIndex < 0) {
       controllerIndex = nextControllers.length;
@@ -80,7 +80,7 @@ export default class ControllerManager {
     }
     nextControllers[controllerIndex].setClient(controllerStore.getUnnamedClientByKey(key));
     subjects.controllers.publish(nextControllers);
-    const nextUnnamedClients = controllerStore.unnamedClients.slice(0);
+    const nextUnnamedClients = controllerStore.unnamedClients.get().slice(0);
     const unnamedClientKeys = nextUnnamedClients.map(client => client.key);
     nextUnnamedClients.splice(unnamedClientKeys.indexOf(key), 1);
     subjects.unnamedClients.publish(nextUnnamedClients);

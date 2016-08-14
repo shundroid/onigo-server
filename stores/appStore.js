@@ -1,29 +1,26 @@
 import { EventEmitter } from "events";
 import subjects from "../subjects";
+import StoreItem from "../util/storeItem";
 
 class AppStore extends EventEmitter {
   constructor() {
     super();
-    this.gameState = "";
-    this.rankingState = "";
-    this.availableCommandsCount = 0;
+    this.gameState = new StoreItem("inactive");
+    this.rankingState = new StoreItem("hide");
+    this.availableCommandsCount = new StoreItem(1);
   }
 }
-function change(changeStoreItem, nextValue) {
-  const prevValue = this[changeStoreItem];
-  this[changeStoreItem] = nextValue;
-  this.emit(changeStoreItem, prevValue, nextValue);
-}
+
 const appStore = new AppStore();
 
 subjects.gameState.subscribe(gameState => {
-  change.call(appStore, "gameState", gameState);
+  appStore.gameState.publish(gameState);
 });
 subjects.rankingState.subscribe(rankingState => {
-  change.call(appStore, "rankingState", rankingState);
+  appStore.rankingState.publish(rankingState);
 });
 subjects.availableCommandsCount.subscribe(availableCommandsCount => {
-  change.call(appStore, "availableCommandsCount", availableCommandsCount);
+  appStore.availableCommandsCount.publish(availableCommandsCount);
 });
 
 export default appStore;

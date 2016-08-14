@@ -7,10 +7,12 @@
   <script type="text/javascript" src="js/build/bundle.js"></script>
 </head>
 <body>
-  <header>
+  <header data-bind="with: appViewModel">
     <h1>Onigo Dashboard</h1>
-    <button id="game-state-button">INACTIVE</button>
-    <button id="show-ranking-button">Show Ranking</button>
+    <button id="game-state-button"
+      data-bind="text: gameStateButtonCaption, click: toggleGameState"></button>
+    <button id="show-ranking-button"
+      data-bind="text: rankingStateButtonCaption"></button>
   </header>
   <main>
     <div id="left-column">
