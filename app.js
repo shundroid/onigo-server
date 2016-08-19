@@ -5,7 +5,7 @@ import spheroWebSocket from "sphero-websocket";
 import argv from "argv";
 
 import config from "./config";
-import SocketManager from "./components/socketManager";
+import SocketManager from "./socketManager";
 import ControllerManager from "./components/controllerManager";
 // import OrbManager from "./orbManager";
 // import SpheroErrorTracker from "./spheroErrorTracker";

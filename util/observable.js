@@ -6,8 +6,18 @@ export class Observable {
     this.observers.push(observer);
   }
   publish(nextValue) {
-    this.observers.forEach(observer => {
-      observer(nextValue);
+    return new Promise((resolve, reject) => {
+      Promise.all(this.observers.map(observer => () => new Promise((resolve, reject) => {
+        observer(nextValue, () => {
+          resolve();
+        }, (error) => {
+          reject(error);
+        });
+      }))).then(() => {
+        resolve();
+      }, error => {
+        reject(error);
+      });
     });
   }
 }

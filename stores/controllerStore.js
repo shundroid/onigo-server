@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import subjects from "../subjects";
+import subjects from "../subjects/appSubjects";
 import StoreItem from "../util/storeItem";
 
 class ControllerStore extends EventEmitter {

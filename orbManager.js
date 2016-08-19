@@ -1,4 +1,4 @@
-import subjects from "./subjects";
+import subjects from "./subjects/appSubjects";
 import Connector from "./connector";
 import arrayDiff from "./util/arrayDiff";
 import Orb from "./orb";

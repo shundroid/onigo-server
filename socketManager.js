@@ -1,9 +1,10 @@
 import socketIO from "socket.io";
-import subjects from "../subjects";
-import socketTransformers from "../socketTransformers";
-import controllerStore from "../stores/controllerStore";
-import orbStore from "../stores/orbStore";
-import appStore from "../stores/appStore";
+import subjects from "./subjects/appSubjects";
+import actionCreator from "./actions/actionCreator";
+import socketTransformers from "./socketTransformers";
+import controllerStore from "./stores/controllerStore";
+import orbStore from "./stores/orbStore";
+import appStore from "./stores/appStore";
 
 const stores = {
   controller: controllerStore,
@@ -11,7 +12,7 @@ const stores = {
   app: appStore
 };
 
-const socketsUseSubjects = {
+const socketsUseStoreItems = {
   orb: [
     "orbs"
   ],
@@ -28,17 +29,17 @@ export default class SocketManager {
   constructor(server) {
     // { subjectName: socketId , ... }
     this.lastSentSockets = {};
-    Object.keys(socketsUseSubjects).forEach(storeName => {
+    Object.keys(socketsUseStoreItems).forEach(storeName => {
       this.lastSentSockets[storeName] = {};
-      socketsUseSubjects[storeName].forEach(subjectName => {
+      socketsUseStoreItems[storeName].forEach(subjectName => {
         this.lastSentSockets[storeName][subjectName] = null;
       });
     });
     
     this.io = socketIO(server);
     this.io.on("connection", socket => {
-      Object.keys(socketsUseSubjects).forEach(storeName => {
-        socketsUseSubjects[storeName].forEach(subjectName => {
+      Object.keys(socketsUseStoreItems).forEach(storeName => {
+        socketsUseStoreItems[storeName].forEach(subjectName => {
           stores[storeName][subjectName].subscribe(item => {
             // io.sockets.emit でもやれそうだが、
             // BehaviorSubject で、現在の値をとれるようにするため、
@@ -62,7 +63,7 @@ export default class SocketManager {
         });
       });
       socket.on("notifications", notification => {
-        subjects.notifications.publish(notification);
+        actionCreator.raiseEvent("notifications", notification);
       });
     });
   }

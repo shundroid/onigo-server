@@ -1,4 +1,4 @@
-import subjects from "../subjects";
+import subjects from "../subjects/appSubjects";
 import Controller from "../controller";
 import CommandRunner from "../commandRunner";
 import arrayDiff from "../util/arrayDiff";

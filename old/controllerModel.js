@@ -1,7 +1,7 @@
 import Controller from "./controller";
 import CommandRunner from "./commandRunner";
 import { EventEmitter } from "events";
-import subjects from "./subjects";
+import subjects from "./subjects/appSubjects";
 import objectValues from "./util/objectValues";
 
 class ControllerModel extends EventEmitter {
