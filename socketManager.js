@@ -41,6 +41,7 @@ export default class SocketManager {
       Object.keys(socketsUseStoreItems).forEach(storeName => {
         socketsUseStoreItems[storeName].forEach(subjectName => {
           stores[storeName][subjectName].subscribe(item => {
+            console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaa");
             // io.sockets.emit でもやれそうだが、
             // BehaviorSubject で、現在の値をとれるようにするため、
             // socketごとにsubscribeしている。
