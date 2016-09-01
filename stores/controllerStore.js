@@ -1,6 +1,7 @@
 import { EventEmitter } from "events";
 import subjects from "../subjects/appSubjects";
 import StoreItem from "../util/storeItem";
+import CommandRunner from "../commandRunner";
 
 class ControllerStore extends EventEmitter {
   constructor() {
@@ -25,11 +26,41 @@ class ControllerStore extends EventEmitter {
 
 const controllerStore = new ControllerStore();
 
-subjects.unnamedClients.subscribe(unnamedClients => {
-  controllerStore.unnamedClients.publish(unnamedClients);
+subjects.addClient.subscribe(clientDetails => {
+  const nextUnnamedClients = controllerStore.unnamedClients.get().slice(0);
+  nextUnnamedClients.push(clientDetails.client);
+  controllerStore.unnamedClients.publish(nextUnnamedClients);
 });
-subjects.controllers.subscribe(controllers => {
-  controllerStore.controllers.publish(controllers);
+subjects.removeClient.subscribe(key => {
+  if (controllerStore.getIndexOfClientByKey(key) < 0) {
+    const nextControllers = controllerStore.controllers.get().slice(0);
+    nextControllers.filter(controller =>
+      controller.client !== null && controller.client.key === key).forEach(controller => {
+      controller.setClient(null);
+    });
+    controllerStore.controllers.publish(nextControllers);
+  } else {
+    const nextUnnamedClients = controllerStore.unnamedClients.get().slice(0);
+    const unnamedClientKeys = nextUnnamedClients.map(client => client.key);
+    nextUnnamedClients.splice(unnamedClientKeys.indexOf(clientDetails.key), 1);
+    controllerStore.unnamedClients.publish(nextUnnamedClients);
+  }
 });
+subjects.setNameClient.subscribeStore(clientDetails => {
+  let controllerIndex = controllerStore.getIndexOfControllerName(clientDetails.name);
+  const nextControllers = controllerStore.controllers.get().slice(0);
+  if (typeof clientDetails.controller !== "undefined") {
+    controllerIndex = nextControllers.length;
+    nextControllers.push(clientDetails.controller);
+  } else if (nextControllers[controllerIndex].client !== null) {
+    throw new Error("setNameしようとしましたが、既にclientが存在します。 name: " + clientDetails.name);
+  }
+  nextControllers[controllerIndex].setClient(controllerStore.getUnnamedClientByKey(clientDetails.key));
+  controllerStore.controllers.publish(nextControllers);
 
+  const nextUnnamedClients = controllerStore.unnamedClients.get().slice(0);
+  const unnamedClientKeys = nextUnnamedClients.map(client => client.key);
+  nextUnnamedClients.splice(unnamedClientKeys.indexOf(clientDetails.key), 1);
+  controllerStore.unnamedClients.publish(nextUnnamedClients);
+});
 export default controllerStore;

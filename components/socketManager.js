@@ -1,10 +1,10 @@
 import socketIO from "socket.io";
-import subjects from "./subjects/appSubjects";
-import actionCreator from "./actions/actionCreator";
-import socketTransformers from "./socketTransformers";
-import controllerStore from "./stores/controllerStore";
-import orbStore from "./stores/orbStore";
-import appStore from "./stores/appStore";
+import subjects from "../subjects/appSubjects";
+import actionCreator from "../actions/actionCreator";
+import socketTransformers from "../socketTransformers";
+import controllerStore from "../stores/controllerStore";
+import orbStore from "../stores/orbStore";
+import appStore from "../stores/appStore";
 
 const stores = {
   controller: controllerStore,
@@ -41,7 +41,6 @@ export default class SocketManager {
       Object.keys(socketsUseStoreItems).forEach(storeName => {
         socketsUseStoreItems[storeName].forEach(subjectName => {
           stores[storeName][subjectName].subscribe(item => {
-            console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaa");
             // io.sockets.emit でもやれそうだが、
             // BehaviorSubject で、現在の値をとれるようにするため、
             // socketごとにsubscribeしている。

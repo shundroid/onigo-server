@@ -19,6 +19,7 @@ class Connector {
           dead: 100
         }, () => {
           subjects.currentLog.publish({ text: "configured orb.", type: "success" });
+          orb.orbInstance = newOrb;
           onNext(orb);
           // const nextOrbs = orbStore.orbs.get().slice(0);
           // nextOrbs.push(new Orb(newOrb));

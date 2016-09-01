@@ -24,6 +24,26 @@ export default class orbManager {
         }
       }
     });
+    subjects.addOrb.subscribe(orbDetails => {
+      const orb = orbDetails.orbInstance;
+      this.spheroServer.addOrb(orb);
+      orb.instance.streamOdometer();
+      orb.instance.on("odometer", data => {
+        // これらは更新されたときに orbModel を変えて、subject は orbs で dashboard に送りたい
+        // const time = new Date();
+        // dashboard.streamed(
+        //   name,
+        //   ("0" + time.getHours()).slice(-2) + ":" +
+        //   ("0" + time.getMinutes()).slice(-2) + ":" +
+        //   ("0" + time.getSeconds()).slice(-2));
+      });
+      orb.on("link", () => {
+        orb.setLink(true);
+      });
+      orb.on("unlink", () => {
+        orb.setLink(false);
+      });
+    });
     subjects.orbs.subscribe(orbs => {
       const diff = arrayDiff.getDiff([...this.orbs.values()], orbs);
       diff.added.forEach(orb => {
