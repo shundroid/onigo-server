@@ -12,8 +12,8 @@ export default class OrbModel {
   addOrb(orbName, orbPort) {
     eventPublisher.emit("notifications", {
       type: "addOrb",
-      orbName: orbName,
-      orbPort: orbPort
+      name: orbName,
+      port: orbPort
     });
   }
   checkBattery() {

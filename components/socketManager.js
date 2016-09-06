@@ -1,6 +1,5 @@
 import socketIO from "socket.io";
 import subjects from "../subjects/appSubjects";
-import actionCreator from "../actions/actionCreator";
 import socketTransformers from "../socketTransformers";
 import controllerStore from "../stores/controllerStore";
 import orbStore from "../stores/orbStore";
@@ -63,7 +62,12 @@ export default class SocketManager {
         });
       });
       socket.on("notifications", notification => {
-        actionCreator.raiseEvent("notifications", notification);
+        if (typeof subjects[notification.type] === "undefined") {
+          throw new Error("指定された subject は見つかりませんでした。 : " + notification.type);
+        }
+        const publishData = Object.assign({}, notification);
+        delete publishData.type;
+        subjects[notification.type].publish(publishData);
       });
     });
   }
