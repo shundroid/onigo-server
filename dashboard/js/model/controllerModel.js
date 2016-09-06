@@ -6,8 +6,7 @@ export default class ControllerModel {
     this.controllers = ko.observableArray([]);
 
     eventPublisher.on("controllers", controllers => {
-      this.controllers.removeAll();
-      this.controllers.push.apply(this.controllers, controllers);
+      this.controllers(controllers);
     });
   }
   updateLink(controllerName, link) {
@@ -17,6 +16,7 @@ export default class ControllerModel {
     if (controllerIndexOf < 0) {
       throw new Error("updateLinkしようとしたcontrollerはありませんでした。 : " + controllerName);
     }
+    console.log(`${nextControllers[controllerIndexOf].link} to ${link}`);
     nextControllers[controllerIndexOf].link = link;
     eventPublisher.emit("controllers", nextControllers);
   }

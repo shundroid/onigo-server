@@ -5,9 +5,10 @@ import StoreItem from "../util/storeItem";
 class AppStore extends EventEmitter {
   constructor() {
     super();
-    this.gameState = new StoreItem("inactive");
-    this.rankingState = new StoreItem("hide");
-    this.availableCommandsCount = new StoreItem(1);
+    this.gameState = new StoreItem();
+    this.rankingState = new StoreItem();
+    this.availableCommandsCount = new StoreItem();
+    this.isTestMode = new StoreItem();
   }
 }
 
@@ -21,6 +22,9 @@ subjects.rankingState.subscribe(rankingState => {
 });
 subjects.availableCommandsCount.subscribe(availableCommandsCount => {
   appStore.availableCommandsCount.publish(availableCommandsCount);
+});
+subjects.isTestMode.subscribeStore(isTestMode => {
+  appStore.isTestMode.publish(isTestMode);
 });
 
 export default appStore;

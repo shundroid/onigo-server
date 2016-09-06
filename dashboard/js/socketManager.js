@@ -51,6 +51,7 @@ function SocketManager() {
       }
     }.bind(this));
     this.socket.on(eventName, function(...datas) {
+      console.log(`socket.on eventName: ${eventName}`);
       emit.apply(this, [eventName].concat(datas));
     }.bind(this));
   });

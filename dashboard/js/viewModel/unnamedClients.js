@@ -6,8 +6,7 @@ export default class UnnamedClients {
 
     this.unnamedClients = ko.observableArray([]);
     this.appModel.unnamedClients.subscribe(unnamedClients => {
-      this.unnamedClients.removeAll();
-      this.unnamedClients.push.apply(this.unnamedClients, unnamedClients);
+      this.unnamedClients(unnamedClients);
     });
   }
 }

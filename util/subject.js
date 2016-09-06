@@ -4,6 +4,11 @@ export default class Subject extends BehaviorObservable {
     super(defaultValue);
     this.stores = [];
   }
+  defineSequence(subjectName, ...middlewares) {
+    middlewares.forEach(middleware => {
+      this.subscribe(middleware.getObserver(subjectName));
+    });
+  }
   subscribeStore(store) {
     this.stores.push(store);
     if (this.currentValue !== null) {

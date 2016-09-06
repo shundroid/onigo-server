@@ -18,8 +18,7 @@ export default class AppModel {
     this.availableCommandsCount = ko.observable(0);
 
     eventPublisher.on("unnamedClients", unnamedClients => {
-      this.unnamedClients.removeAll();
-      this.unnamedClients.push.apply(this.unnamedClients, unnamedClients);
+      this.unnamedClients(unnamedClients);
     });
     eventPublisher.on("gameState", gameState => {
       this.gameState(gameState);

@@ -26,18 +26,16 @@ export default class Controller {
     updateColors.call(this, this.appModel.colors());
 
     this.updateLink = () => {
-      this.controllerModel.updateLink(this.name(), this.link === unlinkedLabel ? null : this.link);
+      this.controllerModel.updateLink(this.name(), this.link() === unlinkedLabel ? null : this.link());
     };
   }
 }
 
 // private methods
 function updateOrbs(orbs) {
-  this.orbs.removeAll();
-  this.orbs.push.apply(this.orbs, [unlinkedLabel].concat(orbs.map(orb => orb.name)));
+  this.orbs([unlinkedLabel].concat(orbs.map(orb => orb.name)))
 }
 
 function updateColors(colors) {
-  this.colors.removeAll();
-  this.colors.push.apply(this.colors, colors);
+  this.colors(colors);
 }

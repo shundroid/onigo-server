@@ -14,7 +14,7 @@ const orbStore = new OrbStore();
 
 subjects.addOrb.subscribeStore(orb => {
   const nextOrbs = orbStore.orbs.get().slice(0);
-  nextOrbs.push(new Orb(orb));
+  nextOrbs.push(orb);
   orbStore.orbs.publish(nextOrbs);
 });
 // subjects.orbs.subscribe(orbs => {

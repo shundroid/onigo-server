@@ -10,8 +10,7 @@ export default class Controllers {
     this.controllers = ko.observableArray([]);
 
     this.controllerModel.controllers.subscribe(controllers => {
-      this.controllers.removeAll();
-      this.controllers.push.apply(this.controllers, controllers.map(controller => {
+      this.controllers(controllers.map(controller => {
         return new Controller(this.appModel, this.orbModel, this.controllerModel, controller);
       }));
     });

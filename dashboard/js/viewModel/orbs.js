@@ -9,8 +9,7 @@ export default class Orbs {
     this.orbs = ko.observableArray([]);
 
     this.orbModel.orbs.subscribe(orbs => {
-      this.orbs.removeAll();
-      this.orbs.push.apply(this.orbs, orbs);
+      this.orbs(orbs);
     });
 
     this.addOrb = () => {

@@ -7,13 +7,15 @@ import argv from "argv";
 import config from "./config";
 import SocketManager from "./components/socketManager";
 import ControllerManager from "./middlewares/controllerManager";
-// import OrbManager from "./orbManager";
+import OrbManager from "./middlewares/orbManager";
 import Connector from "./middlewares/connector";
+import subjects from "./subjects/appSubjects";
 
 const opts = [
   { name: "test", type: "boolean" }
 ];
 const isTestMode = argv.option(opts).run().options.test;
+subjects.isTestMode.publish(isTestMode);
 
 const app = express();
 app.use(express.static("dashboard/"));
@@ -23,8 +25,16 @@ server.listen(8082);
 
 const spheroServer = spheroWebSocket(config.websocket, isTestMode).spheroServer;
 
-new Connector(spheroServer);
-new ControllerManager(spheroServer);
-// new OrbManager(spheroServer, isTestMode, connector);
+// onigo middlewares
+const connector = new Connector(spheroServer);
+const controllerManager = new ControllerManager(spheroServer);
+const orbManager = new OrbManager(spheroServer);
 
+// sequence
+subjects.addOrb.defineSequence("addOrb", connector, orbManager);
+subjects.addClient.defineSequence("addClient", controllerManager);
+subjects.removeClient.defineSequence("removeClient", controllerManager);
+subjects.setNameClient.defineSequence("setNameClient", controllerManager);
+
+// component
 new SocketManager(server);

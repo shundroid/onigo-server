@@ -26,12 +26,12 @@ class ControllerStore extends EventEmitter {
 
 const controllerStore = new ControllerStore();
 
-subjects.addClient.subscribe(clientDetails => {
+subjects.addClient.subscribeStore(clientDetails => {
   const nextUnnamedClients = controllerStore.unnamedClients.get().slice(0);
   nextUnnamedClients.push(clientDetails.client);
   controllerStore.unnamedClients.publish(nextUnnamedClients);
 });
-subjects.removeClient.subscribe(key => {
+subjects.removeClient.subscribeStore(key => {
   if (controllerStore.getIndexOfClientByKey(key) < 0) {
     const nextControllers = controllerStore.controllers.get().slice(0);
     nextControllers.filter(controller =>
@@ -42,7 +42,7 @@ subjects.removeClient.subscribe(key => {
   } else {
     const nextUnnamedClients = controllerStore.unnamedClients.get().slice(0);
     const unnamedClientKeys = nextUnnamedClients.map(client => client.key);
-    nextUnnamedClients.splice(unnamedClientKeys.indexOf(clientDetails.key), 1);
+    nextUnnamedClients.splice(unnamedClientKeys.indexOf(key), 1);
     controllerStore.unnamedClients.publish(nextUnnamedClients);
   }
 });

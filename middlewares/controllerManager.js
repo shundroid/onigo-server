@@ -4,9 +4,11 @@ import CommandRunner from "../commandRunner";
 import arrayDiff from "../util/arrayDiff";
 import controllerStore from "../stores/controllerStore";
 import appStore from "../stores/appStore";
+import MiddlewareBase from "./middlewareBase";
 
-export default class ControllerManager {
+export default class ControllerManager extends MiddlewareBase {
   constructor(spheroServer) {
+    super();
     this.spheroServer = spheroServer;
     spheroServer.events.on("addClient", (key, client) => {
       subjects.addClient.publish({
@@ -18,7 +20,7 @@ export default class ControllerManager {
       subjects.removeClient.publish(key);
     });
 
-    subjects.addClient.subscribe((clientDetails, next) => {
+    this.defineObserver("addClient", (clientDetails, next) => {
       const client = clientDetails.client;
       client.on("arriveCustomMessage", (name, data) => {
         if (/^(requestName|useDefinedName)$/.test(name)) {
@@ -28,11 +30,11 @@ export default class ControllerManager {
       // virtualSphero.addSphero
       next(clientDetails);
     });
-    subjects.removeClient.subscribe((key, next) => {
+    this.defineObserver("removeClient", (key, next) => {
       // virtualSphero.removeSphero
       next(key);
     });
-    subjects.setNameClient.subscribe((clientDetails, next, error) => {
+    this.defineObserver("setNameClient", (clientDetails, next, error) => {
       const nextDetails = clientDetails;
       let controllerIndex = controllerStore.getIndexOfControllerName(clientDetails.name);
       let targetController;

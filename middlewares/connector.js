@@ -1,34 +1,33 @@
 import orbStore from "../stores/orbStore";
-import arrayDiff from "../util/arrayDiff";
+import appStore from "../stores/appStore";
 import Orb from "../orb";
 import subjects from "../subjects/appSubjects";
 import SpheroErrorTracker from "../spheroErrorTracker";
+import MiddlewareBase from "./middlewareBase";
 
-class Connector {
+class Connector extends MiddlewareBase {
   constructor(spheroServer) {
+    super(); 
     this.spheroErrorTracker = new SpheroErrorTracker(5);
-    subjects.addOrb.subscribe((orb, onNext, onError) => {
+    this.defineObserver("addOrb", (orb, onNext, onError) => {
       const newOrb = spheroServer.makeRawOrb(orb.name, orb.port);
-      this.connect(orb.port, newOrb.instance).then(() => {
-        newOrb.instance.configureCollisions({
-          meth: 0x01,
-          xt: 0x7A,
-          xs: 0xFF,
-          yt: 0x7A,
-          ys: 0xFF,
-          dead: 100
-        }, () => {
-          subjects.currentLog.publish({ text: "configured orb.", type: "success" });
-          orb.orbInstance = newOrb;
-          onNext(orb);
-          // const nextOrbs = orbStore.orbs.get().slice(0);
-          // nextOrbs.push(new Orb(newOrb));
-          // subjects.orbs.publish(nextOrbs);
-          // const nextUnconnectedOrbs = orbStore.unconnectedOrbs.get().slice(0);
-          // nextUnconnectedOrbs.splice(nextUnconnectedOrbs.indexOf(orb), 1);
-          // subjects.unnamedClients.publish(nextUnconnectedOrbs);
+      if (appStore.isTestMode.get()) {
+        onNext(new Orb(newOrb));
+      } else {
+        this.connect(orb.port, newOrb.instance).then(() => {
+          newOrb.instance.configureCollisions({
+            meth: 0x01,
+            xt: 0x7A,
+            xs: 0xFF,
+            yt: 0x7A,
+            ys: 0xFF,
+            dead: 100
+          }, () => {
+            subjects.currentLog.publish({ text: "configured orb.", type: "success" });
+            onNext(new Orb(newOrb));
+          });
         });
-      });
+      }
     });
     this.spheroErrorTracker.on("error", (port, errorCount) => {
       if (this.isConnecting(port)) {

@@ -7,8 +7,8 @@
     "build": "webpack --progress --colors",
     "build:watch": "webpack --progress --colors --watch",
     "start": "babel-node app",
-    "test": "babel-node main.js --test",
-    "debug": "babel-node --debug-brk main.js"
+    "test": "babel-node app --test",
+    "debug": "babel-node --debug-brk app"
   },
   "babel": {
     "ignore": [],

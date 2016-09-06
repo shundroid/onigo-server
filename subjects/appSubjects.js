@@ -13,5 +13,6 @@ export default {
   addOrb: new Subject(),
   addClient: new Subject(),
   removeClient: new Subject(),
-  setNameClient: new Subject()
+  setNameClient: new Subject(),
+  isTestMode: new Subject(false)
 };
