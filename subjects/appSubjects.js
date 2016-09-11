@@ -14,5 +14,6 @@ export default {
   addClient: new Subject(),
   removeClient: new Subject(),
   setNameClient: new Subject(),
-  isTestMode: new Subject(false)
+  isTestMode: new Subject(false),
+  checkBattery: new Subject()
 };

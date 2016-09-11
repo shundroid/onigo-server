@@ -35,6 +35,7 @@ subjects.addOrb.defineSequence("addOrb", connector, orbManager);
 subjects.addClient.defineSequence("addClient", controllerManager);
 subjects.removeClient.defineSequence("removeClient", controllerManager);
 subjects.setNameClient.defineSequence("setNameClient", controllerManager);
+subjects.checkBattery.defineSequence("checkBattery", orbManager);
 
 // component
 new SocketManager(server);

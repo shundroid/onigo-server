@@ -1,4 +1,5 @@
 import appStore from "../stores/appStore";
+import orbStore from "../stores/orbStore";
 import subjects from "../subjects/appSubjects";
 import MiddlewareBase from "./middlewareBase";
 
@@ -6,17 +7,24 @@ export default class OrbManager extends MiddlewareBase {
   constructor(spheroServer) {
     super();
     this.spheroServer = spheroServer;
-    subjects.notifications.subscribe(notification => {
-      if (notification.type === "checkBattery") {
-        for (let orb of this.orbs.values()) {
-          orb.checkBattery().then(() => {
-            // 内部で orb.battery が更新された
-            subjects.orbs.publish([...this.orbs.values()]);
-          }, error => {
-            throw new Error(error);
+    this.defineObserver("checkBattery", onNext => {
+      const promises = [];
+      promises.push.apply(promises, orbStore.orbs.get().map(orb => {
+        if (appStore.isTestMode.get()) {
+          return new Promise(resolve => {
+            orb.battery = "Test Battery";
+            resolve();
           });
+        } else {
+          return orb.checkBattery();
         }
-      }
+      }));
+      Promise.all(promises).then(() => {
+        orbStore.orbs.publish(orbStore.orbs.get());
+        onNext();
+      }, error => {
+        throw new Error(error);
+      });
     });
     this.defineObserver("addOrb", (orb, onNext) => {
       const swOrb = orb.swOrb;
