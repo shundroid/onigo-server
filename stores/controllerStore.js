@@ -22,6 +22,11 @@ class ControllerStore extends EventEmitter {
     }
     return this.unnamedClients.get()[index];
   }
+  getLinkControllers(link) {
+    return this.controllers.get().filter(controller => {
+      return controller.linkedOrb !== null && controller.linkedOrb.name === link;
+    });
+  }
 }
 
 const controllerStore = new ControllerStore();

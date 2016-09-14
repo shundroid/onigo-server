@@ -8,6 +8,9 @@ class OrbStore extends EventEmitter {
     super();
     this.orbs = new StoreItem([]);
   }
+  getIndexOfOrbName(name) {
+    return this.orbs.get().map(orb => orb.swOrb.name).indexOf(name);
+  }
 }
 
 const orbStore = new OrbStore();

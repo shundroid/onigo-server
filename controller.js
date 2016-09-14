@@ -1,4 +1,5 @@
 import { EventEmitter } from "events";
+import appStore from "./stores/appStore";
 
 const defaultHp = 100;
 const defaultColor = "green";
@@ -74,7 +75,7 @@ export default class Controller extends EventEmitter {
 }
 
 function updateColor() {
-  if (this.linkedOrb !== null) {
+  if (this.linkedOrb !== null && !appStore.isTestMode.get()) {
     this.linkedOrb.command("color", [this.color]);
   }
 }

@@ -16,8 +16,11 @@ export default class ControllerModel {
     if (controllerIndexOf < 0) {
       throw new Error("updateLinkしようとしたcontrollerはありませんでした。 : " + controllerName);
     }
-    console.log(`${nextControllers[controllerIndexOf].link} to ${link}`);
     nextControllers[controllerIndexOf].link = link;
     eventPublisher.emit("controllers", nextControllers);
+    eventPublisher.emit("notifications", {
+      type: "updateLink",
+      controllerName, link
+    });
   }
 }
