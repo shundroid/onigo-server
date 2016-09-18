@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 import subjects from "../subjects/appSubjects";
 import StoreItem from "../util/storeItem";
 import CommandRunner from "../commandRunner";
+import orbStore from "./orbStore";
 
 class ControllerStore extends EventEmitter {
   constructor() {
@@ -67,5 +68,16 @@ subjects.setNameClient.subscribeStore(clientDetails => {
   const unnamedClientKeys = nextUnnamedClients.map(client => client.key);
   nextUnnamedClients.splice(unnamedClientKeys.indexOf(clientDetails.key), 1);
   controllerStore.unnamedClients.publish(nextUnnamedClients);
+});
+subjects.updateLink.subscribeStore(linkDetails => {
+  const controllers = controllerStore.controllers.get();
+  const controllerIndex = controllerStore.getIndexOfControllerName(linkDetails.controllerName);
+  if (linkDetails.link !== null) {
+    const orb = orbStore.orbs.get()[orbStore.getIndexOfOrbName(linkDetails.link)];
+    controllers[controllerIndex].setLink(orb.swOrb);
+  } else {
+    controllers[controllerIndex].setLink(null);
+  }
+  controllerStore.controllers.publish(controllers);
 });
 export default controllerStore;

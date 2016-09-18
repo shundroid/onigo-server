@@ -2,6 +2,7 @@ import { EventEmitter } from "events";
 import subjects from "../subjects/appSubjects";
 import StoreItem from "../util/storeItem";
 import Orb from "../orb";
+import controllerStore from "./controllerStore";
 
 class OrbStore extends EventEmitter {
   constructor() {
@@ -20,8 +21,21 @@ subjects.addOrb.subscribeStore(orb => {
   nextOrbs.push(orb);
   orbStore.orbs.publish(nextOrbs);
 });
-// subjects.orbs.subscribe(orbs => {
-//   orbStore.orbs.publish(orbs);
-// });
+subjects.updateLink.subscribeStore(linkDetails => {
+  if (linkDetails.link !== null) {
+    const orb = orbStore.orbs.get()[orbStore.getIndexOfOrbName(linkDetails.link)];
+    if (!orb.isLinked) {
+      orb.isLinked = true;
+      orbStore.orbs.publish(orbStore.orbs.get());
+    }
+  } else {
+    const linkedOrb = controllerStore.controllers.get()[controllerIndex].linkedOrb;
+    if (linkedOrb !== null && controllerStore.getLinkControllers(linkedOrb.name).length === 0) {
+      const orb = orbStore.orbs.get()[orbStore.getIndexOfOrbName(linkedOrb.name)];
+      orb.isLinked = false;
+      orbStore.orbs.publish(orbStore.orbs.get());
+    }
+  }
+});
 
 export default orbStore;

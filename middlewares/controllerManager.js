@@ -69,26 +69,8 @@ export default class ControllerManager extends MiddlewareBase {
       });
       next(nextDetails);
     });
-    this.defineObserver("updateLink", linkDetails => {
-      const controllers = controllerStore.controllers.get();
-      const controllerIndex = controllerStore.getIndexOfControllerName(linkDetails.controllerName);
-      if (linkDetails.link !== null) {
-        const orb = orbStore.orbs.get()[orbStore.getIndexOfOrbName(linkDetails.link)];
-        controllers[controllerIndex].setLink(orb.swOrb);
-        if (!orb.isLinked) {
-          orb.isLinked = true;
-          orbStore.orbs.publish(orbStore.orbs.get());
-        }
-      } else {
-        const linkedOrb = controllers[controllerIndex].linkedOrb;
-        controllers[controllerIndex].setLink(null);
-        if (linkedOrb !== null && controllerStore.getLinkControllers(linkedOrb.name).length === 0) {
-          const orb = orbStore.orbs.get()[orbStore.getIndexOfOrbName(linkedOrb.name)];
-          orb.isLinked = false;
-          orbStore.orbs.publish(orbStore.orbs.get());
-        }
-      }
-      controllerStore.controllers.publish(controllers);
+    this.defineObserver("gameState", gameState => {
+
     });
   }
   // controllers に add して、unnamedClients から remove する
