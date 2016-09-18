@@ -69,8 +69,15 @@ export default class ControllerManager extends MiddlewareBase {
       });
       next(nextDetails);
     });
-    this.defineObserver("gameState", gameState => {
+    this.defineObserver("gameState", (gameState, next) => {
+      const clients = controllerStore.controllers.get()
+        .filter(controller => controller.client !== null)
+        .map(controller => controller.client);
 
+      clients.forEach(client => {
+        client.sendCustomMessage("gameState", gameState);
+        next(gameState);
+      });
     });
   }
   // controllers に add して、unnamedClients から remove する

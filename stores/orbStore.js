@@ -29,6 +29,7 @@ subjects.updateLink.subscribeStore(linkDetails => {
       orbStore.orbs.publish(orbStore.orbs.get());
     }
   } else {
+    const controllerIndex = controllerStore.getIndexOfControllerName(linkDetails.controllerName);
     const linkedOrb = controllerStore.controllers.get()[controllerIndex].linkedOrb;
     if (linkedOrb !== null && controllerStore.getLinkControllers(linkedOrb.name).length === 0) {
       const orb = orbStore.orbs.get()[orbStore.getIndexOfOrbName(linkedOrb.name)];

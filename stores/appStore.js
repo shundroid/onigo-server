@@ -14,13 +14,13 @@ class AppStore extends EventEmitter {
 
 const appStore = new AppStore();
 
-subjects.gameState.subscribe(gameState => {
+subjects.gameState.subscribeStore(gameState => {
   appStore.gameState.publish(gameState);
 });
-subjects.rankingState.subscribe(rankingState => {
+subjects.rankingState.subscribeStore(rankingState => {
   appStore.rankingState.publish(rankingState);
 });
-subjects.availableCommandsCount.subscribe(availableCommandsCount => {
+subjects.availableCommandsCount.subscribeStore(availableCommandsCount => {
   appStore.availableCommandsCount.publish(availableCommandsCount);
 });
 subjects.isTestMode.subscribeStore(isTestMode => {
