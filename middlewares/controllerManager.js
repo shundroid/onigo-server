@@ -1,4 +1,4 @@
-import subjects from "../subjects/appSubjects";
+import { subjects } from "../subjects/appSubjects";
 import Controller from "../controller";
 import CommandRunner from "../commandRunner";
 import arrayDiff from "../util/arrayDiff";
@@ -76,8 +76,20 @@ export default class ControllerManager extends MiddlewareBase {
 
       clients.forEach(client => {
         client.sendCustomMessage("gameState", gameState);
-        next(gameState);
       });
+      next(gameState);
+    });
+    this.defineObserver("availableCommandsCount", (count, next) => {
+      const clients = controllerStore.controllers.get()
+        .filter(controller => controller.client !== null)
+        .map(controller => controller.client);
+
+      console.log(count);
+
+      clients.forEach(client => {
+        client.sendCustomMessage("availableCommandsCount", count);
+      });
+      next(count);
     });
   }
   // controllers に add して、unnamedClients から remove する

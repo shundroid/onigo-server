@@ -1,7 +1,8 @@
-import { BehaviorObservable } from "./observable";
-export default class Subject extends BehaviorObservable {
+import { Observable } from "./observable";
+export default class Subject extends Observable {
   constructor(defaultValue = null) {
-    super(defaultValue);
+    super();
+    this.currentValue = defaultValue;
     this.stores = [];
   }
   defineSequence(subjectName, ...middlewares) {
@@ -11,8 +12,10 @@ export default class Subject extends BehaviorObservable {
   }
   subscribeStore(store) {
     this.stores.push(store);
+  }
+  flowCurrentValue() {
     if (this.currentValue !== null) {
-      store(this.currentValue);
+      this.publish(this.currentValue);
     }
   }
   publish(nextValue) {

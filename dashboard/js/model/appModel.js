@@ -33,4 +33,7 @@ export default class AppModel {
   toggleGameState() {
     eventPublisher.emit("gameState", this.gameState() === "inactive" ? "active" : "inactive");
   }
+  setAvailableCommandsCount(count) {
+    eventPublisher.emit("availableCommandsCount", count);
+  }
 }

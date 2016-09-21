@@ -45,7 +45,10 @@ function SocketManager() {
       if (this.isSentBySocket[stateName]) {
         delete this.isSentBySocket[stateName];
       } else {
-        this.socket.emit(stateName, state);
+        this.socket.emit("notifications", {
+          type: stateName,
+          state
+        });
       }
     });
   });

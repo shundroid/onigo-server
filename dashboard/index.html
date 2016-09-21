@@ -16,10 +16,10 @@
   </header>
   <main>
     <div id="left-column">
-      <section>
+      <section data-bind="with: appViewModel">
         <h2>Available Commands</h2>
-        Count: <input type="number" id="available-commands" min="1" max="6" value="1" />
-        <button id="set-available-commands-button">Set</button>
+        Count: <input type="number" data-bind="value: availableCommandsCount" min="1" max="6" value="1" />
+        <button data-bind="click: setAvailableCommandsCount">Set</button>
       </section>
       <section>
         <h2>Unnamed Controllers</h2>

@@ -6,7 +6,7 @@ export default class AppViewModel {
 
     this.gameState = ko.observable("inactive");
     this.rankingState = ko.observable("hide");
-    this.availableCommandsCount = ko.observable(0);
+    this.availableCommandsCount = ko.observable(1);
 
     this.appModel.gameState.subscribe(gameState => this.gameState(gameState));
     this.appModel.rankingState.subscribe(rankingState => this.rankingState(rankingState));
@@ -21,6 +21,9 @@ export default class AppViewModel {
 
     this.toggleGameState = () => {
       this.appModel.toggleGameState();
+    };
+    this.setAvailableCommandsCount = () => {
+      this.appModel.setAvailableCommandsCount(parseInt(this.availableCommandsCount()));
     };
   }
 }

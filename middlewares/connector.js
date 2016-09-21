@@ -1,7 +1,7 @@
 import orbStore from "../stores/orbStore";
 import appStore from "../stores/appStore";
 import Orb from "../orb";
-import subjects from "../subjects/appSubjects";
+import { subjects } from "../subjects/appSubjects";
 import SpheroErrorTracker from "../spheroErrorTracker";
 import MiddlewareBase from "./middlewareBase";
 

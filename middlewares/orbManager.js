@@ -1,6 +1,6 @@
 import appStore from "../stores/appStore";
 import orbStore from "../stores/orbStore";
-import subjects from "../subjects/appSubjects";
+import { subjects } from "../subjects/appSubjects";
 import MiddlewareBase from "./middlewareBase";
 
 export default class OrbManager extends MiddlewareBase {

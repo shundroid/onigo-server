@@ -1,6 +1,6 @@
 import Subject from "../util/subject";
 
-export default {
+export const subjects = {
   gameState: new Subject("inactive"),
   rankingState: new Subject("hide"),
   availableCommandsCount: new Subject(1),
@@ -16,5 +16,12 @@ export default {
   setNameClient: new Subject(),
   isTestMode: new Subject(false),
   checkBattery: new Subject(),
-  updateLink: new Subject()
+  updateLink: new Subject(),
 };
+
+export function initialize() {
+  Object.keys(subjects).forEach(subjectName => {
+    subjects[subjectName].flowCurrentValue();
+  });
+}
+

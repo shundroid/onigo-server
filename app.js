@@ -9,7 +9,7 @@ import SocketManager from "./components/socketManager";
 import ControllerManager from "./middlewares/controllerManager";
 import OrbManager from "./middlewares/orbManager";
 import Connector from "./middlewares/connector";
-import subjects from "./subjects/appSubjects";
+import { subjects, initialize } from "./subjects/appSubjects";
 
 const opts = [
   { name: "test", type: "boolean" }
@@ -37,6 +37,8 @@ subjects.removeClient.defineSequence("removeClient", controllerManager);
 subjects.setNameClient.defineSequence("setNameClient", controllerManager);
 subjects.checkBattery.defineSequence("checkBattery", orbManager);
 subjects.gameState.defineSequence("gameState", controllerManager);
+subjects.availableCommandsCount.defineSequence("availableCommandsCount", controllerManager);
+initialize();
 
 // component
 new SocketManager(server);

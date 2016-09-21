@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import subjects from "../subjects/appSubjects";
+import { subjects } from "../subjects/appSubjects";
 import StoreItem from "../util/storeItem";
 import CommandRunner from "../commandRunner";
 import orbStore from "./orbStore";
