@@ -7,11 +7,7 @@
     </header>
     <main>
       <div id="left-column">
-        <section>
-          <h2>Available Commands</h2>
-          Count: <input type="number" id="available-commands" min="1" max="6" value="1" />
-          <button id="set-available-commands-button">Set</button>
-        </section>
+        <commands-count-controller></commands-count-controller>
         <section>
           <h2>Unnamed Controllers</h2>
           <ul id="unnamed-controllers">
@@ -68,9 +64,12 @@
 
 <script>
 import gameStateButton from "./gameStateButton.vue";
+import commandsCountController from "./commandsCountController.vue";
+
 export default {
   components: {
-    gameStateButton
+    gameStateButton,
+    commandsCountController
   }
 };
 </script>

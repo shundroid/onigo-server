@@ -49,9 +49,17 @@ export default function(store) {
   socketManager.on("gameState", gameState => {
     store.commit("setDefaultGameState", gameState);
   });
+  socketManager.on("availableCommandsCount", count => {
+    store.commit("updateAvailableCommandsCount", count);
+  });
   store.subscribe((mutation, state) => {
-    if (mutation.type === "toggleGameState") {
+    switch (mutation.type) {
+    case "toggleGameState":
       socketManager.emitToSocket("gameState", state.gameState);
+      break;
+    case "updateAvailableCommandsCount":
+      socketManager.emitToSocket("availableCommandsCount", state.availableCommandsCount);
+      break;
     }
   });
 }

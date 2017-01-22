@@ -7,7 +7,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    gameState: "inactive"
+    gameState: "inactive",
+    availableCommandsCount: 1
   },
   mutations: {
     setDefaultGameState(state, gameState) {
@@ -15,6 +16,9 @@ export default new Vuex.Store({
     },
     toggleGameState(state) {
       state.gameState = state.gameState === "inactive" ? "active" : "inactive";
+    },
+    updateAvailableCommandsCount(state, count) {
+      state.availableCommandsCount = count;
     }
   },
   actions: {
@@ -23,6 +27,9 @@ export default new Vuex.Store({
     },
     setDefaultGameState({ commit }, gameState) {
       commit("setDefaultGameState", gameState);
+    },
+    updateAvailableCommandsCount({ commit }, count) {
+      commit("updateAvailableCommandsCount", count);
     }
   },
   plugins: [socketPlugin]
