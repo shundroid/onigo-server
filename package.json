@@ -35,7 +35,9 @@
     "gulp": "^3.9.1",
     "minimist": "^1.2.0",
     "style-loader": "^0.13.1",
-    "webpack": "^1.13.1"
+    "vue-loader": "^10.0.2",
+    "vue-template-compiler": "^2.1.10",
+    "webpack": "^2.1.0-beta.25"
   },
   "dependencies": {
     "argv": "0.0.2",
@@ -43,6 +45,8 @@
     "knockout": "^3.4.0",
     "socket.io": "^1.4.8",
     "sphero-websocket": "^0.5.10",
-    "sphero-ws-virtual-plugin": "1.1.2"
+    "sphero-ws-virtual-plugin": "1.1.2",
+    "vue": "^2.1.10",
+    "vuex": "^2.1.1"
   }
 }

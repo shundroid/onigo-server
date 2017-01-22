@@ -1,5 +1,9 @@
 import "../css/style.css";
 
+import Vue from "vue";
+import Vuex from "vuex";
+
+import appOptions from "../components/app.vue";
 import eventPublisher from "./publisher";
 import ControllerManager from "./controllerManager";
 import SocketManager from "./socketManager";
@@ -13,7 +17,10 @@ import PingButton from "./pingButton";
 import UnnamedControllers from "./unnamedControllers";
 import Log from "./log";
 
+Vue.use(Vuex);
 document.addEventListener("DOMContentLoaded", () => {
+  const app = new Vue(appOptions).$mount("#app");
+
   new ControllerManager(document.getElementById("controllers"));
   new RankingState(document.getElementById("show-ranking-button"));
   new GameState(document.getElementById("game-state-button"));

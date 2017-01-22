@@ -11,7 +11,7 @@ module.exports = {
     filename: "./[name]/js/build/bundle.js"
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
@@ -21,6 +21,7 @@ module.exports = {
           presets: ["es2015"]
         }
       },
+      { test: /\.vue$/, loader: "vue-loader" },
       { test: /\.css$/, loader: "style-loader!css-loader" }
     ]
   }
