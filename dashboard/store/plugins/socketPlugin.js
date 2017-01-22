@@ -47,19 +47,23 @@ class SocketManager extends EventEmitter {
 export default function(store) {
   var socketManager = new SocketManager();
   socketManager.on("gameState", gameState => {
-    store.commit("setDefaultGameState", gameState);
+    store.dispatch("setDefaultGameState", gameState);
   });
   socketManager.on("availableCommandsCount", count => {
-    store.commit("updateAvailableCommandsCount", count);
+    store.dispatch("updateAvailableCommandsCount", count);
   });
-  store.subscribe((mutation, state) => {
-    switch (mutation.type) {
-    case "toggleGameState":
-      socketManager.emitToSocket("gameState", state.gameState);
-      break;
-    case "updateAvailableCommandsCount":
-      socketManager.emitToSocket("availableCommandsCount", state.availableCommandsCount);
-      break;
+  socketManager.on("log", (logText, logType) => {
+    store.dispatch("pushLog", { text: logText, type: logType });
+  });
+
+  store.subscribe(({ type, payload }, state) => {
+    switch (type) {
+      case "toggleGameState":
+        socketManager.emitToSocket("gameState", state.app.gameState);
+        break;
+      case "updateAvailableCommandsCount":
+        socketManager.emitToSocket("availableCommandsCount", payload);
+        break;
     }
   });
 }

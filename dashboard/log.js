@@ -1,11 +1,5 @@
 import eventPublisher from "./publisher";
 
-const logTypeColors = {
-  log: "white",
-  error: "red",
-  warning: "orange",
-  success: "lightgreen"
-}
 export default class Log {
   constructor() {
     this.logElement = document.getElementById("log-area");

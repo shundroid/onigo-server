@@ -44,20 +44,6 @@ main > div {
   overflow-y: scroll;
 }
 
-#log-column {
-  display: flex;
-  flex-direction: column;
-}
-
-#log-area {
-  flex: 1;
-  background-color: black;
-  color: white;
-  margin: 5px;
-  overflow-y: scroll;
-  padding: 2px;
-}
-
 #check-battery-button {
   margin: 0 2px;
 }

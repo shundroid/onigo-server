@@ -1,36 +1,18 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
+import appModule from "./modules/appModule";
+import logModule from "./modules/logModule";
+
 import socketPlugin from "./plugins/socketPlugin";
+import logTimeStampPlugin from "./plugins/logTimeStampPlugin";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {
-    gameState: "inactive",
-    availableCommandsCount: 1
+  modules: {
+    app: appModule,
+    log: logModule
   },
-  mutations: {
-    setDefaultGameState(state, gameState) {
-      state.gameState = gameState;
-    },
-    toggleGameState(state) {
-      state.gameState = state.gameState === "inactive" ? "active" : "inactive";
-    },
-    updateAvailableCommandsCount(state, count) {
-      state.availableCommandsCount = count;
-    }
-  },
-  actions: {
-    toggleGameState({ commit, state }) {
-      commit("toggleGameState");
-    },
-    setDefaultGameState({ commit }, gameState) {
-      commit("setDefaultGameState", gameState);
-    },
-    updateAvailableCommandsCount({ commit }, count) {
-      commit("updateAvailableCommandsCount", count);
-    }
-  },
-  plugins: [socketPlugin]
+  plugins: [socketPlugin, logTimeStampPlugin]
 });

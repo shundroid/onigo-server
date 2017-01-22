@@ -49,15 +49,10 @@
               <th>Last Streamed</th>
               <th>Disconnect</th>
               <th>Reconnect</th>
-            </tr>
           </table>
         </section>
       </div>
-      <div id="log-column">
-        <h2>Log <button id="clear-log">Clear Log</button></h2>
-        <div id="log-area">
-        </div>
-      </div>
+      <log></log>
     </main>
   </div>
 </template>
@@ -65,11 +60,13 @@
 <script>
 import gameStateButton from "./gameStateButton.vue";
 import commandsCountController from "./commandsCountController.vue";
+import log from "./log.vue";
 
 export default {
   components: {
     gameStateButton,
-    commandsCountController
+    commandsCountController,
+    log
   }
 };
 </script>

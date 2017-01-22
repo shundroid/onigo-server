@@ -5,9 +5,9 @@
 <script>
 import { mapState, mapActions } from "vuex";
 export default {
-  computed: mapState([
-    "gameState"
-  ]),
+  computed: mapState({
+    gameState: state => state.app.gameState
+  }),
   methods: mapActions([
     "toggleGameState"
   ])
