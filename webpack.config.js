@@ -3,7 +3,7 @@ const webpack = require("webpack");
 module.exports = {
   cache: true,
   entry: {
-    dashboard: "./dashboard/js/main.js",
+    dashboard: "./dashboard/main.js",
     scoreboard: "./scoreboard/js/main.js"
   },
   output: {

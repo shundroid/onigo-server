@@ -2,7 +2,7 @@
   <div id="root">
     <header>
       <h1>Onigo Dashboard</h1>
-      <button id="game-state-button">INACTIVE</button>
+      <game-state-button></game-state-button>
       <button id="show-ranking-button">Show Ranking</button>
     </header>
     <main>
@@ -67,7 +67,12 @@
 </template>
 
 <script>
-export default {};
+import gameStateButton from "./gameStateButton.vue";
+export default {
+  components: {
+    gameStateButton
+  }
+};
 </script>
 
 <style>

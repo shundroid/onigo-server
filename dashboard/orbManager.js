@@ -1,5 +1,5 @@
 import eventPublisher from "./publisher";
-import OrbMap from "../../util/orbMap";
+import OrbMap from "../util/orbMap";
 
 export default class OrbManager {
   constructor(element) {
