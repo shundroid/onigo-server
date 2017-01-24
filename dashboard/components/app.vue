@@ -13,20 +13,7 @@
           <ul id="unnamed-controllers">
           </ul>
         </section>
-        <section>
-          <h2>Controllers</h2>
-          <table id="controllers">
-            <tr>
-              <th>Name</th>
-              <th>Key</th>
-              <th>Linked Orb</th>
-              <th>Oni</th>
-              <th>HP</th>
-              <th>Reset HP</th>
-              <th>Color</th>
-            </tr>
-          </table>
-        </section>
+        <controller-manager></controller-manager>
         <section>
           <h2>Add Orb</h2>
           Name: <input type="text" id="new-orb-name" /><br />
@@ -61,12 +48,14 @@
 import gameStateButton from "./gameStateButton.vue";
 import commandsCountController from "./commandsCountController.vue";
 import log from "./log.vue";
+import controllerManager from "./controllerManager.vue";
 
 export default {
   components: {
     gameStateButton,
     commandsCountController,
-    log
+    log,
+    controllerManager
   }
 };
 </script>

@@ -55,6 +55,9 @@ export default function(store) {
   socketManager.on("log", (logText, logType) => {
     store.dispatch("pushLog", { text: logText, type: logType });
   });
+  socketManager.on("defaultControllers", controllers => {
+    store.dispatch("setDefaultControllers", controllers);
+  });
 
   store.subscribe(({ type, payload }, state) => {
     switch (type) {
