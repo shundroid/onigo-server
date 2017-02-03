@@ -145,7 +145,7 @@ spheroWS.spheroServer.events.on("addOrb", (name, orb) => {
           controller.setHp(controller.hp - 10);
           eventPublisher.emit("updatedHp", controller);
         }
-      })
+      });
     });
   }
   dashboard.addOrb(name, orb.port);
