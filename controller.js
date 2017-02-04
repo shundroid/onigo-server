@@ -29,17 +29,10 @@ export default class Controller extends EventEmitter {
     }
     this.emit("oni", this.isOni);
   }
-  setLink(orb) {
+  setLink(orbName) {
     // client も持っているが、それに左右されずにするため link は別に持つ必要がある
-    this.linkedOrb = orb !== null ? orb : null;
-    if (this.client !== null) {
-      if (orb === null) {
-        this.client.unlink();
-      } else {
-        this.client.setLinkedOrb(orb);
-      }
-    }
-    updateColor.call(this);
+    this.linkedOrbName = orbName;
+    //updateColor.call(this);
   }
   setClient(client) {
     this.client = client;

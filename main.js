@@ -36,6 +36,7 @@ import controllerModel from "./controllerModel";
 import RankingMaker from "./rankingMaker";
 import Connector from "./connector";
 import eventPublisher from "./publisher";
+import PortManager from "./portManager";
 
 const opts = [
   { name: "test", type: "boolean" }
@@ -47,7 +48,7 @@ const spheroWS = spheroWebSocket(config.websocket, isTestMode);
 const virtualSphero = new VirtualSphero(config.virtualSphero.wsPort);
 
 const dashboard = new Dashboard(config.dashboardPort);
-dashboard.updateUnlinkedOrbs(spheroWS.spheroServer.getUnlinkedOrbs());
+//dashboard.updateUnlinkedOrbs(spheroWS.spheroServer.getUnlinkedOrbs());
 
 const scoreboard = new Scoreboard(config.scoreboardPort);
 
@@ -58,6 +59,8 @@ let availableCommandsCount = 1;
 const rankingMaker = new RankingMaker();
 
 const connector = new Connector();
+
+const portManager = new PortManager();
 
 spheroWS.spheroServer.events.on("addClient", (key, client) => {
   controllerModel.add(key, client);
@@ -105,11 +108,8 @@ controllerModel.on("named", (key, name, isNewName) => {
 
   if (isNewName) {
     controller.commandRunner.on("command", (commandName, args) => {
-      if (controller.linkedOrb !== null) {
-        if (!controller.linkedOrb.hasCommand(commandName)) {
-          throw new Error(`command : ${commandName} is not valid.`);
-        }
-        controller.linkedOrb.command(commandName, args);
+      if (controller.linkedOrbName !== null) {
+        portManager.runCommand(controller.linkedOrbName, commandName, ...args);
       }
       virtualSphero.command(name, commandName, args);
     });
@@ -126,34 +126,17 @@ controllerModel.on("named", (key, name, isNewName) => {
   });
 });
 
-const orbs = spheroWS.spheroServer.getOrb();
-Object.keys(orbs).forEach(orbName => {
-  dashboard.addOrb(orbName, orbs[orbName].port);
-});
+portManager.getSpheros();
+portManager.connect(8085);
 
-spheroWS.spheroServer.events.on("addOrb", (name, orb) => {
-  if (!isTestMode) {
-    const rawOrb = orb.instance;
-    rawOrb.color("white");
-    rawOrb.detectCollisions();
-    rawOrb.on("collision", () => {
-      Object.keys(controllerModel.controllers).forEach(controllerName => {
-        const controller = controllerModel.get(controllerName);
-        if (gameState === "active" && !controller.isOni &&
-            controller.client !== null &&
-            orb.linkedClients.indexOf(controller.client.key) !== -1) {
-          controller.setHp(controller.hp - 10);
-          eventPublisher.emit("updatedHp", controller);
-        }
-      });
-    });
-  }
-  dashboard.addOrb(name, orb.port);
-  dashboard.updateUnlinkedOrbs(spheroWS.spheroServer.getUnlinkedOrbs());
+portManager.on("updateOrb", (orbs) => {
+  orbs.forEach(({ name, port }) => {
+    dashboard.addOrb(name, port);
+  });
 });
-spheroWS.spheroServer.events.on("removeOrb", name => {
+/*spheroWS.spheroServer.events.on("roveOrb", name => {
   dashboard.removeOrb(name);
-});
+});*/
 
 dashboard.on("gameState", state => {
   gameState = state;
@@ -191,50 +174,20 @@ dashboard.on("availableCommandsCount", count => {
 dashboard.on("updateLink", (controllerName, orbName) => {
   controllerModel.get(controllerName).setLink(
     orbName !== null ? spheroWS.spheroServer.getOrb(orbName) : null);
-  dashboard.updateUnlinkedOrbs(spheroWS.spheroServer.getUnlinkedOrbs());
+  //dashboard.updateUnlinkedOrbs(spheroWS.spheroServer.getUnlinkedOrbs());
   eventPublisher.emit("updateLink", controllerName, orbName);
 });
 dashboard.on("addOrb", (name, port) => {
-  const rawOrb = spheroWS.spheroServer.makeRawOrb(name, port);
-  if (!isTestMode) {
-    if (!connector.isConnecting(port)) {
-      error121Count = 0;
-      connector.connect(port, rawOrb.instance).then(() => {
-        dashboard.log("connected orb.", "success");
-        rawOrb.instance.configureCollisions({
-          meth: 0x01,
-          xt: 0x7A,
-          xs: 0xFF,
-          yt: 0x7A,
-          ys: 0xFF,
-          dead: 100
-        }, () => {
-          dashboard.log("configured orb.", "success");
-          spheroWS.spheroServer.addOrb(rawOrb);
-          rawOrb.instance.streamOdometer();
-          rawOrb.instance.on("odometer", data => {
-            const time = new Date();
-            dashboard.streamed(
-              name,
-              ("0" + time.getHours()).slice(-2) + ":" +
-              ("0" + time.getMinutes()).slice(-2) + ":" +
-              ("0" + time.getSeconds()).slice(-2));
-          });
-        });
-      });
-    }
-  } else {
-    spheroWS.spheroServer.addOrb(rawOrb);
-  }
+  portManager.addOrb(name, port);
 });
 dashboard.on("removeOrb", name => {
-  spheroWS.spheroServer.removeOrb(name);
+  portManager.removeOrb(name);
 });
 dashboard.on("oni", (name, enable) => {
   controllerModel.get(name).setIsOni(enable);
 });
 dashboard.on("checkBattery", () => {
-  const orbs = spheroWS.spheroServer.getOrb();
+/**  const orbs = spheroWS.spheroServer.getOrb();
   Object.keys(orbs).forEach(orbName => {
     orbs[orbName].instance.getPowerState((error, data) => {
       if (error) {
@@ -243,7 +196,7 @@ dashboard.on("checkBattery", () => {
         dashboard.updateBattery(orbName, data.batteryState);
       }
     });
-  });
+  });*/
 });
 dashboard.on("resetHp", name => {
   const controller = controllerModel.get(name);
@@ -263,7 +216,7 @@ dashboard.on("pingAll", () => {
   });
 });
 dashboard.on("reconnect", name => {
-  if (!isTestMode) {
+/**  if (!isTestMode) {
     const orb = spheroWS.spheroServer.getOrb(name);
     if (orb !== null) {
       orb.instance.disconnect(() => {
@@ -281,7 +234,7 @@ dashboard.on("reconnect", name => {
         }
       });
     }
-  }
+  }*/
 });
 dashboard.on("color", (name, color) => {
   controllerModel.get(name).setColor(color);

@@ -47,4 +47,7 @@ export default class PortManager extends EventEmitter {
     }
     this.socket.emit("runCommand", targetName, commandName, ...args);
   }
+  getSpheros() {
+    this.socket.emit("getSpheros");
+  }
 }
