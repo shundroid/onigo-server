@@ -1,3 +1,6 @@
 [submodule "server"]
 	path = server
 	url = https://github.com/comozilla/sphero-websocket.git
+[submodule "sphero.js"]
+	path = sphero.js
+	url = https://github.com/shundroid/sphero.js.git
