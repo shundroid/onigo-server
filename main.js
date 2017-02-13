@@ -137,7 +137,6 @@ spheroWS.spheroServer.events.on("addOrb", (name, orb) => {
   if (!isTestMode) {
     const rawOrb = orb.instance;
     rawOrb.color("white");
-    rawOrb.detectCollisions();
     rawOrb.on("collision", () => {
       Object.keys(controllerModel.controllers).forEach(controllerName => {
         const controller = controllerModel.get(controllerName);
@@ -212,11 +211,11 @@ dashboard.on("addOrb", (name, port) => {
         dashboard.log("connected orb.", "success");
         rawOrb.instance.configureCollisions({
           meth: 0x01,
-          xt: 0x7A,
-          xs: 0xFF,
-          yt: 0x7A,
-          ys: 0xFF,
-          dead: 100
+          xt: 0x20,
+          xs: 0x20,
+          yt: 0x20,
+          ys: 0x20,
+          dead: 0x02
         }, () => {
           dashboard.log("configured orb.", "success");
           spheroWS.spheroServer.addOrb(rawOrb);
