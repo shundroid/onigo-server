@@ -23,9 +23,10 @@ import UUIDModel from "./model/uuidModel";
 const models = {
   appModel: new AppModel(),
   orbModel: new OrbModel(),
-  controllerModel: new ControllerModel(),
-  uuidModel: new UUIDModel()
+  controllerModel: new ControllerModel()
 };
+
+models.uuidModel = new UUIDModel(models);
 
 console.error = (message) => {
   const exec121Error = /Error: Opening (\\\\\.\\)?(.+): Unknown error code (121|1167)/.exec(message);
