@@ -21,6 +21,7 @@ module.exports = {
           presets: ["es2015"]
         }
       },
+      { test: /\.vue$/, loader: "vue-loader" },
       { test: /\.css$/, loader: "style-loader!css-loader" }
     ]
   }
