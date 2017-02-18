@@ -20,6 +20,7 @@ function SocketManager() {
   this.socket = io();
   this.socket.on("defaultData", (state, count, controllers, orbs, unnameds) => {
     emit.call(this, "gameState", [state]);
+    // TODO: Issue #59
     emit.call(this, "availableCommandsCount", [count]);
     emit.call(this, "orbs", [orbs]);
     emit.call(this, "defaultControllers", [controllers]);

@@ -1,10 +1,6 @@
 <template>
   <div id="app">
-    <header>
-      <h1>Onigo Dashboard</h1>
-      <button id="game-state-button">INACTIVE</button>
-      <button id="show-ranking-button">Show Ranking</button>
-    </header>
+    <onigo-header></onigo-header>
     <main>
       <div id="left-column">
         <section>
@@ -66,5 +62,18 @@
 </template>
 
 <script>
-export default {};
+import header from "./header.vue";
+
+export default {
+  components: {
+    onigoHeader: header
+  }
+};
 </script>
+
+<style>
+#app {
+  width: 100%;
+  height: 100%;
+}
+</style>

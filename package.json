@@ -8,7 +8,8 @@
     "build:watch": "webpack --progress --colors --watch",
     "start": "babel-node main.js",
     "testrun": "babel-node main.js --test",
-    "test": "mocha --compilers js:babel-register",
+    "test": "mocha test/ dashboard/js/test/ --compilers js:babel-register",
+    "test:dashboard": "mocha dashboard/js/test/ --compilers js:babel-register",
     "debug": "babel-node --debug-brk main.js"
   },
   "babel": {
