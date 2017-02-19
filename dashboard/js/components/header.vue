@@ -5,7 +5,7 @@
     <button id="show-ranking-button"
             @click="toggleRankingState"
             :disabled="isDisabledRankingButton">
-      {{ this.rankingState }} Ranking
+      Ranking: {{ this.rankingState }}
     </button>
   </header>
 </template>
@@ -31,7 +31,7 @@ export default {
   },
   computed: {
     isDisabledRankingButton() {
-      return this.gameState === "active";
+      return this.gameState === "inactive";
     }
   },
   methods: {

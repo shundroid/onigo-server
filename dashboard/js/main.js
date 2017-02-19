@@ -5,7 +5,6 @@ import appOptions from "./components/app.vue";
 import eventPublisher from "./publisher";
 import ControllerManager from "./controllerManager";
 import SocketManager from "./socketManager";
-import AvailableCommandsCount from "./availableCommandsCount";
 import AddOrb from "./addOrb";
 import OrbManager from "./orbManager";
 import CheckBatteryButton from "./checkBatteryButton";
@@ -18,9 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
   new ControllerManager(document.getElementById("controllers"));
   new AddOrb();
   new OrbManager(document.getElementById("orbs"));
-  new AvailableCommandsCount(
-      document.getElementById("available-commands"),
-      document.getElementById("set-available-commands-button"));
   new SocketManager();
   new CheckBatteryButton(document.getElementById("check-battery-button"));
   new PingButton(document.getElementById("ping-button"));

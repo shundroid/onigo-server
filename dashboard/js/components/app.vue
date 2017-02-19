@@ -3,11 +3,7 @@
     <onigo-header></onigo-header>
     <main>
       <div id="left-column">
-        <section>
-          <h2>Available Commands</h2>
-          Count: <input type="number" id="available-commands" min="1" max="6" value="1" />
-          <button id="set-available-commands-button">Set</button>
-        </section>
+        <available-commands></available-commands>
         <section>
           <h2>Unnamed Controllers</h2>
           <ul id="unnamed-controllers">
@@ -62,11 +58,13 @@
 </template>
 
 <script>
-import header from "./header.vue";
+import onigoHeader from "./header.vue";
+import availableCommands from "./availableCommands.vue";
 
 export default {
   components: {
-    onigoHeader: header
+    onigoHeader,
+    availableCommands
   }
 };
 </script>

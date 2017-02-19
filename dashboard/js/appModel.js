@@ -4,12 +4,16 @@ export class AppModel {
   constructor() {
     this.gameState = "";
     this.rankingState = "hide";
+    this.availableCommandsCount = 1;
 
     eventPublisher.on("gameState", state => {
       this.gameState = state;
     });
     eventPublisher.on("rankingState", state => {
       this.rankingState = state;
+    });
+    eventPublisher.on("availableCommandsCount", count => {
+      this.availableCommandsCount = count;
     });
   }
   toggleGameState() {
@@ -35,6 +39,9 @@ export class AppModel {
     default:
       throw new Error("tryed to toggle rankingState but rankingState is invalid. rankingState: " + this.gameState);
     }
+  }
+  updateAvailableCommandsCount(count) {
+    eventPublisher.emit("availableCommandsCount", count);
   }
 }
 

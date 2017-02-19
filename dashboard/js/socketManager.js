@@ -108,7 +108,7 @@ function emit(eventName, args) {
   if (typeof this[methodName] !== "undefined") {
     eventPublisher.removeListener(eventName, this[methodName].bind(this));
   }
-  eventPublisher.emit.apply(eventPublisher, [eventName].concat(args));
+  eventPublisher.emit(eventName, ...args);
   if (typeof this[methodName] !== "undefined") {
     eventPublisher.on(eventName, this[methodName].bind(this));
   }
